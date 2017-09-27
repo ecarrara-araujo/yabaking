@@ -1,12 +1,34 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <color name="colorPrimary">#3F51B5</color>
-    <color name="colorPrimaryDark">#303F9F</color>
-    <color name="colorAccent">#FF4081</color>
 
+    <color name="primary">@color/deep_orange_500</color>
+    <color name="primary_dark">@color/deep_orange_700</color>
+    <color name="primary_light">@color/deep_orange_100</color>
+    <color name="accent">@color/amber_500</color>
+    <color name="primary_text">@color/grey_900</color>
+    <color name="secondary_text">@color/grey_600</color>
+    <color name="icons">@color/white</color>
+    <color name="divider">@color/grey_400</color>
+
+    <!-- Blacks -->
     <color name="black">#000000</color>
     <color name="black_transparent">#00000000</color>
     <color name="black_semi_transparent">#4d000000</color>
+
+    <!-- Whites -->
     <color name="white">#FFFFFF</color>
+
+    <!-- Oranges -->
+    <color name="deep_orange_100">#FFCCBC</color>
+    <color name="deep_orange_500">#FF5722</color>
+    <color name="deep_orange_700">#E64A19</color>
+
+    <!-- Grays -->
+    <color name="grey_400">#BDBDBD</color>
+    <color name="grey_600">#757575</color>
+    <color name="grey_900">#212121</color>
+
+    <!-- Ambers -->
+    <color name="amber_500">#FFC107</color>
 
 </resources>
