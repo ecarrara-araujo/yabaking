@@ -1,3 +1,7 @@
 <resources>
     <string name="app_name">YaBaking</string>
+
+    <!-- Load View -->
+    <string name="retry_button">Retry</string>
+
 </resources>
