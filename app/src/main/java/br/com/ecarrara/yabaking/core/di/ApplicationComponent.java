@@ -13,4 +13,6 @@ import dagger.Component;
 })
 public interface ApplicationComponent {
 
+    void inject(RecipesListActivity recipesListActivity);
+
 }

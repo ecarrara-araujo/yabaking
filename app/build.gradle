@@ -45,6 +45,9 @@ dependencies {
     compile "com.android.support:design:$ANDROID_SUPPORT_LIBS_VERSION"
     compile 'com.android.support.constraint:constraint-layout:1.0.2'
 
+    // Image Handling
+    compile 'com.squareup.picasso:picasso:2.5.2'
+
     // Logging
     compile 'com.jakewharton.timber:timber:4.5.1'
 
@@ -62,6 +65,9 @@ dependencies {
 
     compile "com.google.dagger:dagger:$DAGGER_VERSION"
     annotationProcessor "com.google.dagger:dagger-compiler:$DAGGER_VERSION"
+
+    // Utils
+    compile 'com.annimon:stream:1.1.9'
 
     // Unit Tests
     testCompile 'junit:junit:4.12'

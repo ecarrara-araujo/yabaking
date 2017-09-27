@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <!-- Recipes List -->
+    <dimen name="recipes_list_item_width_ratio">240dp</dimen>
+
+</resources>
