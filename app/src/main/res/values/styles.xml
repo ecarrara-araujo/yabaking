@@ -21,4 +21,12 @@
         <item name="android:shadowRadius">2</item>
     </style>
 
+    <style name="Title" parent="TextAppearance.AppCompat.Title"/>
+
+    <style name="Subheading" parent="TextAppearance.AppCompat.Subhead"/>
+
+    <style name="Body2" parent="Base.TextAppearance.AppCompat.Body2"/>
+
+    <style name="Body1" parent="Base.TextAppearance.AppCompat.Body1"/>
+
 </resources>
