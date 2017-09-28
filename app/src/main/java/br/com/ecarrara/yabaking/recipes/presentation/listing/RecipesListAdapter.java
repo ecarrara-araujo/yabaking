@@ -11,6 +11,7 @@ import android.widget.TextView;
 import com.squareup.picasso.Picasso;
 
 import java.util.List;
+import java.util.Random;
 
 import br.com.ecarrara.yabaking.R;
 import butterknife.BindView;
@@ -20,9 +21,11 @@ public class RecipesListAdapter extends RecyclerView.Adapter<RecipesListAdapter.
 
     private Context context;
     private List<RecipeListItemViewModel> recipeListItemViewModels;
+    private int[] possibleBackgroundColors;
 
     public RecipesListAdapter(Context context) {
         this.context = context;
+        this.possibleBackgroundColors = context.getResources().getIntArray(R.array.recipes_list_colors);
     }
 
     @Override
@@ -42,8 +45,15 @@ public class RecipesListAdapter extends RecyclerView.Adapter<RecipesListAdapter.
             Picasso.with(context)
                     .load(recipeListItemViewModel.imageUrl())
                     .fit()
+                    .placeholder(getBackgroundColorForItem())
                     .into(holder.recipeImageView);
+        } else {
+            holder.recipeImageView.setBackgroundColor(getBackgroundColorForItem());
         }
+    }
+
+    private int getBackgroundColorForItem() {
+        return possibleBackgroundColors[new Random().nextInt(possibleBackgroundColors.length)];
     }
 
     @Override
