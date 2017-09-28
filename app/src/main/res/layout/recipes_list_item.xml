@@ -33,6 +33,7 @@
         app:layout_constraintTop_toTopOf="@+id/recipes_list_item_image_view" />
 
     <TextView
+        style="@style/Headline.RecipesList"
         android:id="@+id/recipes_list_item_name_text_view"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
@@ -40,12 +41,6 @@
         android:layout_marginLeft="8dp"
         android:layout_marginRight="8dp"
         android:textColor="@color/white"
-        android:textSize="24sp"
-        android:fontFamily="sans-serif"
-        android:shadowColor="@color/black"
-        android:shadowDx="1"
-        android:shadowDy="1"
-        android:shadowRadius="2"
         app:layout_constraintBottom_toBottomOf="@+id/view"
         app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintLeft_toLeftOf="parent"
