@@ -13,13 +13,16 @@ import javax.inject.Inject;
 import br.com.ecarrara.yabaking.R;
 import br.com.ecarrara.yabaking.core.di.Injector;
 import br.com.ecarrara.yabaking.core.presentation.LoadDataActivity;
+import br.com.ecarrara.yabaking.recipes.domain.entity.Recipe;
+import br.com.ecarrara.yabaking.recipes.presentation.details.RecipeDetailsActivity;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 
 import static android.view.View.GONE;
 import static android.view.View.VISIBLE;
 
-public class RecipesListActivity extends LoadDataActivity<List<RecipeListItemViewModel>> {
+public class RecipesListActivity extends LoadDataActivity<List<RecipeListItemViewModel>>
+    implements RecipesListView {
 
     @Inject
     RecipesListPresenter recipesListPresenter;
@@ -58,7 +61,7 @@ public class RecipesListActivity extends LoadDataActivity<List<RecipeListItemVie
         final int NUMBER_OF_COLUMNS_IN_GRID = computeNumberOfColumns();
 
         GridLayoutManager layoutManager = new GridLayoutManager(this, NUMBER_OF_COLUMNS_IN_GRID);
-        recipesListAdapter = new RecipesListAdapter(this);
+        recipesListAdapter = new RecipesListAdapter(this, recipesListPresenter);
         recipesListView.setAdapter(recipesListAdapter);
         recipesListView.setLayoutManager(layoutManager);
         recipesListView.setHasFixedSize(true);
@@ -107,6 +110,11 @@ public class RecipesListActivity extends LoadDataActivity<List<RecipeListItemVie
     @Override
     public void hideContent() {
         this.recipesListView.setVisibility(GONE);
+    }
+
+    @Override
+    public void navigateToRecipeDetail(Recipe recipe) {
+        RecipeDetailsActivity.navigate(this, recipe);
     }
 
 }
