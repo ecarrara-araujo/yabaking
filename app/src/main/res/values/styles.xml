@@ -29,4 +29,10 @@
 
     <style name="Body1" parent="Base.TextAppearance.AppCompat.Body1"/>
 
+    <style name="SingleLineListItemText" parent="Body1">
+        <item name="android:textSize">@dimen/list_item_single_line_text_size</item>
+        <item name="android:paddingStart">@dimen/list_item_single_line_padding_start_end</item>
+        <item name="android:paddingEnd">@dimen/list_item_single_line_padding_start_end</item>
+    </style>
+
 </resources>
