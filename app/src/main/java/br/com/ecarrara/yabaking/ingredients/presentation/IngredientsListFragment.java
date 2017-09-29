@@ -14,6 +14,7 @@ import java.util.List;
 import javax.inject.Inject;
 
 import br.com.ecarrara.yabaking.R;
+import br.com.ecarrara.yabaking.core.di.Injector;
 import br.com.ecarrara.yabaking.core.presentation.LoadDataFragment;
 import br.com.ecarrara.yabaking.ingredients.domain.entity.Ingredient;
 import butterknife.BindView;
@@ -84,6 +85,7 @@ public class IngredientsListFragment extends LoadDataFragment<List<String>> {
     }
 
     private void initialize() {
+        Injector.applicationComponent().inject(this);
         setupRecyclerView();
     }
 
