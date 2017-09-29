@@ -8,6 +8,7 @@ import java.util.Collections;
 import java.util.List;
 
 import br.com.ecarrara.yabaking.ingredients.domain.entity.Ingredient;
+import br.com.ecarrara.yabaking.steps.domain.entity.Step;
 
 @AutoValue
 public abstract class Recipe implements Parcelable {
@@ -19,6 +20,8 @@ public abstract class Recipe implements Parcelable {
     public abstract String imageUrl();
 
     public abstract List<Ingredient> ingredients();
+
+    public abstract List<Step> steps();
 
     public static Builder builder() {
         return new AutoValue_Recipe.Builder()
@@ -35,6 +38,8 @@ public abstract class Recipe implements Parcelable {
         public abstract Builder setImageUrl(String imageUrl);
 
         public abstract Builder setIngredients(List<Ingredient> ingredients);
+
+        public abstract Builder setSteps(List<Step> steps);
 
         public abstract Recipe build();
 
