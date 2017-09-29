@@ -9,4 +9,6 @@ public interface RecipesRepository {
 
     Single<List<Recipe>> list();
 
+    Single<Recipe> get(Integer recipeId);
+
 }

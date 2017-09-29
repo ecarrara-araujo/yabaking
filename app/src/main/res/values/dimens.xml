@@ -1,6 +1,17 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 
+    <!-- Commons -->
+    <dimen name="list_item_single_line_height">48dp</dimen>
+    <dimen name="list_item_single_line_padding_start_end">16dp</dimen>
+    <dimen name="list_item_single_line_text_size">16sp</dimen>
+    <dimen name="list_single_line_padding_top_bottom">8dp</dimen>
+    <dimen name="app_bar_elevation">4dp</dimen>
+
+    <!-- Recipe Details -->
+    <dimen name="recipe_details_header_height">192dp</dimen>
+    <dimen name="recipe_deyails_app_bar_layout_elevation">0dp</dimen>
+
     <!-- Recipes List -->
     <dimen name="recipes_list_item_width_ratio">240dp</dimen>
 

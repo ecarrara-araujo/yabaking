@@ -1,6 +1,7 @@
 package br.com.ecarrara.yabaking.recipes.presentation.listing;
 
 import android.content.Context;
+import android.support.annotation.NonNull;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -22,10 +23,12 @@ public class RecipesListAdapter extends RecyclerView.Adapter<RecipesListAdapter.
     private Context context;
     private List<RecipeListItemViewModel> recipeListItemViewModels;
     private int[] possibleBackgroundColors;
+    private RecipeSelectedListener recipeSelectedListener;
 
-    public RecipesListAdapter(Context context) {
+    public RecipesListAdapter(@NonNull Context context, @NonNull RecipeSelectedListener recipeSelectedListener) {
         this.context = context;
         this.possibleBackgroundColors = context.getResources().getIntArray(R.array.recipes_list_colors);
+        this.recipeSelectedListener = recipeSelectedListener;
     }
 
     @Override
@@ -81,8 +84,10 @@ public class RecipesListAdapter extends RecyclerView.Adapter<RecipesListAdapter.
         }
 
         @Override
-        public void onClick(View v) {
-            // go to recipe detail
+        public void onClick(View view) {
+            RecipesListAdapter.this.recipeSelectedListener.onRecipeSelected(
+                    recipeListItemViewModels.get(getAdapterPosition()).recipeId()
+            );
         }
     }
 

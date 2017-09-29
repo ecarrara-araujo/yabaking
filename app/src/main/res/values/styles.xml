@@ -1,6 +1,6 @@
 <resources>
 
-    <style name="AppTheme" parent="AppTheme.Base"/>
+    <style name="AppTheme" parent="AppTheme.Base" />
 
     <style name="AppTheme.Base" parent="Theme.AppCompat.Light.DarkActionBar">
         <item name="colorPrimary">@color/primary</item>
@@ -10,7 +10,15 @@
         <item name="android:textColorSecondary">@color/secondary_text</item>
     </style>
 
-    <style name="Headline" parent="TextAppearance.AppCompat.Headline"/>
+    <style name="AppTheme.Base.NoActionBar" parent="Theme.AppCompat.Light.NoActionBar">
+        <item name="colorPrimary">@color/primary</item>
+        <item name="colorPrimaryDark">@color/primary_dark</item>
+        <item name="colorAccent">@color/accent</item>
+        <item name="android:textColorPrimary">@color/primary_text</item>
+        <item name="android:textColorSecondary">@color/secondary_text</item>
+    </style>
+
+    <style name="Headline" parent="TextAppearance.AppCompat.Headline" />
 
     <style name="Headline.RecipesList">
         <item name="android:textColor">@color/white</item>
@@ -21,12 +29,31 @@
         <item name="android:shadowRadius">2</item>
     </style>
 
-    <style name="Title" parent="TextAppearance.AppCompat.Title"/>
+    <style name="Display1" parent="TextAppearance.AppCompat.Display1" />
 
-    <style name="Subheading" parent="TextAppearance.AppCompat.Subhead"/>
+    <style name="Title" parent="TextAppearance.AppCompat.Title" />
 
-    <style name="Body2" parent="Base.TextAppearance.AppCompat.Body2"/>
+    <style name="Subheading" parent="TextAppearance.AppCompat.Subhead" />
 
-    <style name="Body1" parent="Base.TextAppearance.AppCompat.Body1"/>
+    <style name="Body2" parent="Base.TextAppearance.AppCompat.Body2" />
+
+    <style name="Body1" parent="Base.TextAppearance.AppCompat.Body1" />
+
+    <style name="SingleLineListItemText" parent="Body1">
+        <item name="android:textSize">@dimen/list_item_single_line_text_size</item>
+        <item name="android:paddingStart">@dimen/list_item_single_line_padding_start_end</item>
+        <item name="android:paddingEnd">@dimen/list_item_single_line_padding_start_end</item>
+    </style>
+
+    <style name="RecipeDetailsCollapsingToolbarTitleText" parent="Headline">
+        <item name="android:textColor">@color/white</item>
+    </style>
+
+    <style name="Toolbar" parent="ThemeOverlay.AppCompat.Dark.ActionBar">
+        <item name="android:background">?attr/colorPrimary</item>
+        <item name="android:textColorPrimary">@android:color/white</item>
+        <item name="android:textColorSecondary">@android:color/white</item>
+        <item name="actionMenuTextColor">@android:color/white</item>
+    </style>
 
 </resources>
