@@ -1,7 +1,6 @@
 package br.com.ecarrara.yabaking.recipes.presentation.details;
 
 import android.content.Intent;
-import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.design.widget.CollapsingToolbarLayout;
@@ -27,6 +26,8 @@ public class RecipeDetailsActivity extends AppCompatActivity {
         ActivityCompat.startActivity(parentActivity, intent, null);
     }
 
+    private static final String LAST_KNOWN_RECIPE_KEY = "recipe";
+
     @BindView(R.id.toolbar)
     Toolbar toolbar;
 
@@ -48,14 +49,21 @@ public class RecipeDetailsActivity extends AppCompatActivity {
         setContentView(R.layout.recipes_details_activity);
         ButterKnife.bind(this);
         processExtras(getIntent().getExtras());
+        processSavedInstanceState(savedInstanceState);
         setUpActionBar();
         setUpCollapsingToolbarLayout();
         setUpViewPager();
     }
 
     private void processExtras(Bundle extras) {
-        if(extras != null) {
+        if (extras != null) {
             recipe = extras.getParcelable(ARGUMENT_RECIPE);
+        }
+    }
+
+    private void processSavedInstanceState(Bundle savedInstanceState) {
+        if (savedInstanceState != null && recipe == null) {
+            recipe = savedInstanceState.getParcelable(LAST_KNOWN_RECIPE_KEY);
         }
     }
 
@@ -73,6 +81,12 @@ public class RecipeDetailsActivity extends AppCompatActivity {
                 getSupportFragmentManager(), this, recipe);
         recipeDetailsViewPager.setAdapter(recipeDetailsViewPagerAdapter);
         recipeDetailsTabs.setupWithViewPager(recipeDetailsViewPager);
+    }
+
+    @Override
+    public void onSaveInstanceState(Bundle outState) {
+        outState.putParcelable(LAST_KNOWN_RECIPE_KEY, recipe);
+        super.onSaveInstanceState(outState);
     }
 
     @Override
