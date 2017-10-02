@@ -12,10 +12,12 @@ import android.support.v7.widget.Toolbar;
 
 import br.com.ecarrara.yabaking.R;
 import br.com.ecarrara.yabaking.recipes.domain.entity.Recipe;
+import br.com.ecarrara.yabaking.steps.presentation.navigating.StepSelectedListener;
+import br.com.ecarrara.yabaking.steps.presentation.navigating.StepsNavigationActivity;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 
-public class RecipeDetailsActivity extends AppCompatActivity {
+public class RecipeDetailsActivity extends AppCompatActivity implements StepSelectedListener {
 
     public static final String ARGUMENT_RECIPE = "recipe";
 
@@ -79,6 +81,7 @@ public class RecipeDetailsActivity extends AppCompatActivity {
     private void setUpViewPager() {
         recipeDetailsViewPagerAdapter = new RecipeDetailsViewPagerAdapter(
                 getSupportFragmentManager(), this, recipe);
+        recipeDetailsViewPagerAdapter.setStepSelectedListener(this);
         recipeDetailsViewPager.setAdapter(recipeDetailsViewPagerAdapter);
         recipeDetailsTabs.setupWithViewPager(recipeDetailsViewPager);
     }
@@ -94,4 +97,10 @@ public class RecipeDetailsActivity extends AppCompatActivity {
         onBackPressed();
         return true;
     }
+
+    @Override
+    public void onStepSelected(Integer stepPosition) {
+        StepsNavigationActivity.navigate(this, recipe.steps(), stepPosition);
+    }
+
 }

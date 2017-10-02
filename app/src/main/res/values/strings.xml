@@ -21,4 +21,9 @@
     <string name="measure_oz">oz</string>
     <string name="measure_unit">unit(s)</string>
 
+    <!-- Steps Details and Navigation -->
+    <string name="step_details_next_step">Next Step</string>
+    <string name="step_details_previous_step">Previous Step</string>
+    <string name="step_details_recipe_steps">Recipe Steps</string>
+
 </resources>

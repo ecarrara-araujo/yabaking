@@ -1,6 +1,7 @@
 package br.com.ecarrara.yabaking.steps.presentation.listing;
 
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -17,6 +18,8 @@ import br.com.ecarrara.yabaking.R;
 import br.com.ecarrara.yabaking.core.di.Injector;
 import br.com.ecarrara.yabaking.core.presentation.LoadDataFragment;
 import br.com.ecarrara.yabaking.steps.domain.entity.Step;
+import br.com.ecarrara.yabaking.steps.presentation.navigating.StepSelectedListener;
+import br.com.ecarrara.yabaking.steps.presentation.navigating.StepsNavigationActivity;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 
@@ -48,12 +51,17 @@ public class StepsListFragment extends LoadDataFragment<List<String>> {
     @BindView(R.id.steps_list_recycler_view)
     RecyclerView stepsListView;
 
-    private static final String LAST_KNOWN_STEPS_LIST_POSITION_KEY = "last_known_ingredients_list_position";
+    private static final String LAST_KNOWN_STEPS_LIST_POSITION_KEY = "last_known_steps_list_position";
     private static final int DEFAULT_STEPS_LIST_INITIAL_POSITION = 0;
 
     private int lastKnownStepsListPosition = DEFAULT_STEPS_LIST_INITIAL_POSITION;
     private StepsListAdapter stepsListAdapter;
     private ArrayList<Step> steps;
+    private StepSelectedListener stepSelectedListener;
+
+    public void setStepSelectedListener(@NonNull StepSelectedListener stepSelectedListener) {
+        this.stepSelectedListener = stepSelectedListener;
+    }
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
@@ -92,7 +100,7 @@ public class StepsListFragment extends LoadDataFragment<List<String>> {
     private void setupRecyclerView() {
         LinearLayoutManager layoutManager = new LinearLayoutManager(getContext(),
                 LinearLayoutManager.VERTICAL, false);
-        stepsListAdapter = new StepsListAdapter();
+        stepsListAdapter = new StepsListAdapter(stepSelectedListener);
         stepsListView.setAdapter(stepsListAdapter);
         stepsListView.setLayoutManager(layoutManager);
         stepsListView.setHasFixedSize(true);
