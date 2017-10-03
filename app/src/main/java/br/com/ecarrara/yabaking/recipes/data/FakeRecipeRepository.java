@@ -156,7 +156,7 @@ public class FakeRecipeRepository implements RecipesRepository {
                 .setId(2)
                 .setDescription("Step 2 - you must lololololo")
                 .setShortDescription("Step 2 - lolo")
-                .setThumbnailPath("")
+                .setThumbnailPath("https://www.hestancue.com/wp-content/themes/hestan/images/get-start-pic-2.jpg")
                 .setVideoPath("")
                 .build();
     }

@@ -2,12 +2,14 @@ package br.com.ecarrara.yabaking.steps.presentation.navigating;
 
 import android.graphics.BitmapFactory;
 import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.google.android.exoplayer2.DefaultLoadControl;
@@ -22,11 +24,14 @@ import com.google.android.exoplayer2.trackselection.TrackSelector;
 import com.google.android.exoplayer2.ui.SimpleExoPlayerView;
 import com.google.android.exoplayer2.upstream.DefaultDataSourceFactory;
 import com.google.android.exoplayer2.util.Util;
+import com.squareup.picasso.Picasso;
 
 import br.com.ecarrara.yabaking.R;
 import br.com.ecarrara.yabaking.steps.domain.entity.Step;
 import butterknife.BindView;
 import butterknife.ButterKnife;
+
+import static android.view.View.INVISIBLE;
 
 public class StepDetailFragment extends Fragment {
 
@@ -47,6 +52,9 @@ public class StepDetailFragment extends Fragment {
 
     @BindView(R.id.step_detail_media_view)
     SimpleExoPlayerView mediaPlayerView;
+
+    @BindView(R.id.step_detail_image_view)
+    ImageView imageView;
 
     @BindView(R.id.step_detail_short_description_text_view)
     TextView shortDescriptionTextView;
@@ -92,8 +100,22 @@ public class StepDetailFragment extends Fragment {
         this.shortDescriptionTextView.setText(step.shortDescription());
         this.descriptionTextView.setText(step.description());
 
-        setUpMediaPlayer();
-        setUpMediaSource();
+        setUpMediaContent();
+    }
+
+    private void setUpMediaContent() {
+        if(!step.videoPath().isEmpty()) {
+            setUpMediaPlayer();
+            setUpMediaSource();
+            return;
+        }
+
+        if(!step.thumbnailPath().isEmpty()) {
+            setUpStepImageView();
+            return;
+        }
+
+        setUpEmptyImageView();
     }
 
     private void setUpMediaPlayer() {
@@ -117,6 +139,26 @@ public class StepDetailFragment extends Fragment {
         mediaPlayer.getPlayWhenReady();
     }
 
+    private void setUpStepImageView() {
+        mediaPlayerView.setVisibility(INVISIBLE);
+        Picasso.with(getContext())
+                .load(step.thumbnailPath())
+                .placeholder(R.color.primary)
+                .fit()
+                .into(imageView);
+    }
+
+    private void setUpEmptyImageView() {
+        mediaPlayerView.setVisibility(INVISIBLE);
+        int placeholderBackgroundColor;
+        if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+            placeholderBackgroundColor = getResources().getColor(R.color.primary, null);
+        } else {
+            placeholderBackgroundColor = getResources().getColor(R.color.primary);
+        }
+        imageView.setBackgroundColor(placeholderBackgroundColor);
+    }
+
     @Override
     public void onDestroy() {
         super.onDestroy();
@@ -124,9 +166,11 @@ public class StepDetailFragment extends Fragment {
     }
 
     private void releasePlayer() {
-        mediaPlayer.stop();
-        mediaPlayer.release();
-        mediaPlayer = null;
+        if(mediaPlayer != null) {
+            mediaPlayer.stop();
+            mediaPlayer.release();
+            mediaPlayer = null;
+        }
     }
 
     @Override

@@ -25,5 +25,6 @@
     <string name="step_details_next_step">Next Step</string>
     <string name="step_details_previous_step">Previous Step</string>
     <string name="step_details_recipe_steps">Recipe Steps</string>
+    <string name="step_detail_image_with_step_execution_description">Image with step execution</string>
 
 </resources>
