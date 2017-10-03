@@ -7,6 +7,7 @@
     <dimen name="list_item_single_line_text_size">16sp</dimen>
     <dimen name="list_single_line_padding_top_bottom">8dp</dimen>
     <dimen name="app_bar_elevation">4dp</dimen>
+    <dimen name="card_resting_elevation">2dp</dimen>
 
     <!-- Recipe Details -->
     <dimen name="recipe_details_header_height">192dp</dimen>
@@ -14,5 +15,14 @@
 
     <!-- Recipes List -->
     <dimen name="recipes_list_item_width_ratio">240dp</dimen>
+
+    <!-- Step Detail -->
+    <dimen name="step_detail_margin">8dp</dimen>
+    <dimen name="step_detail_margin_large">16dp</dimen>
+    <dimen name="step_detail_title_bottom_padding">16dp</dimen>
+
+    <!-- Player -->
+    <dimen name="player_padding">4dp</dimen>
+    <dimen name="player_seek_bar_height">32dp</dimen>
 
 </resources>

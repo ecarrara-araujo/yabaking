@@ -48,6 +48,7 @@ public class IngredientsListFragment extends LoadDataFragment<List<String>> {
     @BindView(R.id.ingredients_list_recycler_view)
     RecyclerView ingredientsListView;
 
+    private static final String LAST_KNOWN_INGREDIENTS_LIST = "last_known_ingredients_list";
     private static final String LAST_KNOWN_INGREDIENTS_LIST_POSITION_KEY = "last_known_ingredients_list_position";
     private static final int DEFAULT_INGREDIENTS_LIST_INITIAL_POSITION = 0;
 
@@ -69,9 +70,10 @@ public class IngredientsListFragment extends LoadDataFragment<List<String>> {
     }
 
     private void processSavedInstanceState(Bundle savedInstanceState) {
-        if(savedInstanceState != null) {
+        if(savedInstanceState != null && ingredients == null) {
             lastKnownIngredientsListPosition = savedInstanceState.getInt(
                     LAST_KNOWN_INGREDIENTS_LIST_POSITION_KEY, DEFAULT_INGREDIENTS_LIST_INITIAL_POSITION);
+            ingredients = savedInstanceState.getParcelableArrayList(LAST_KNOWN_INGREDIENTS_LIST);
         }
     }
 
@@ -108,6 +110,7 @@ public class IngredientsListFragment extends LoadDataFragment<List<String>> {
     public void onSaveInstanceState(Bundle outState) {
         outState.putInt(LAST_KNOWN_INGREDIENTS_LIST_POSITION_KEY,
                 ((LinearLayoutManager)ingredientsListView.getLayoutManager()).findFirstVisibleItemPosition());
+        outState.putParcelableArrayList(LAST_KNOWN_INGREDIENTS_LIST, ingredients);
         super.onSaveInstanceState(outState);
     }
 

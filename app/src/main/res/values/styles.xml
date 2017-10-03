@@ -56,4 +56,14 @@
         <item name="actionMenuTextColor">@android:color/white</item>
     </style>
 
+    <style name="FlatButton" parent="Widget.AppCompat.Button.Borderless"/>
+
+    <style name="PlayerText" parent="Body2">
+        <item name="android:textColor">@color/white</item>
+    </style>
+
+    <style name="PlayerSeekBar" parent="Widget.AppCompat.ProgressBar.Horizontal">
+        <item name="android:layout_height">@dimen/player_seek_bar_height</item>
+    </style>
+
 </resources>

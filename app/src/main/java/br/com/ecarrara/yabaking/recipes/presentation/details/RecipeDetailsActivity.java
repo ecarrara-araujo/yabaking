@@ -1,7 +1,6 @@
 package br.com.ecarrara.yabaking.recipes.presentation.details;
 
 import android.content.Intent;
-import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.design.widget.CollapsingToolbarLayout;
@@ -13,10 +12,12 @@ import android.support.v7.widget.Toolbar;
 
 import br.com.ecarrara.yabaking.R;
 import br.com.ecarrara.yabaking.recipes.domain.entity.Recipe;
+import br.com.ecarrara.yabaking.steps.presentation.navigating.StepSelectedListener;
+import br.com.ecarrara.yabaking.steps.presentation.navigating.StepsNavigationActivity;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 
-public class RecipeDetailsActivity extends AppCompatActivity {
+public class RecipeDetailsActivity extends AppCompatActivity implements StepSelectedListener {
 
     public static final String ARGUMENT_RECIPE = "recipe";
 
@@ -26,6 +27,8 @@ public class RecipeDetailsActivity extends AppCompatActivity {
 
         ActivityCompat.startActivity(parentActivity, intent, null);
     }
+
+    private static final String LAST_KNOWN_RECIPE_KEY = "recipe";
 
     @BindView(R.id.toolbar)
     Toolbar toolbar;
@@ -48,14 +51,21 @@ public class RecipeDetailsActivity extends AppCompatActivity {
         setContentView(R.layout.recipes_details_activity);
         ButterKnife.bind(this);
         processExtras(getIntent().getExtras());
+        processSavedInstanceState(savedInstanceState);
         setUpActionBar();
         setUpCollapsingToolbarLayout();
         setUpViewPager();
     }
 
     private void processExtras(Bundle extras) {
-        if(extras != null) {
+        if (extras != null) {
             recipe = extras.getParcelable(ARGUMENT_RECIPE);
+        }
+    }
+
+    private void processSavedInstanceState(Bundle savedInstanceState) {
+        if (savedInstanceState != null && recipe == null) {
+            recipe = savedInstanceState.getParcelable(LAST_KNOWN_RECIPE_KEY);
         }
     }
 
@@ -71,8 +81,15 @@ public class RecipeDetailsActivity extends AppCompatActivity {
     private void setUpViewPager() {
         recipeDetailsViewPagerAdapter = new RecipeDetailsViewPagerAdapter(
                 getSupportFragmentManager(), this, recipe);
+        recipeDetailsViewPagerAdapter.setStepSelectedListener(this);
         recipeDetailsViewPager.setAdapter(recipeDetailsViewPagerAdapter);
         recipeDetailsTabs.setupWithViewPager(recipeDetailsViewPager);
+    }
+
+    @Override
+    public void onSaveInstanceState(Bundle outState) {
+        outState.putParcelable(LAST_KNOWN_RECIPE_KEY, recipe);
+        super.onSaveInstanceState(outState);
     }
 
     @Override
@@ -80,4 +97,10 @@ public class RecipeDetailsActivity extends AppCompatActivity {
         onBackPressed();
         return true;
     }
+
+    @Override
+    public void onStepSelected(Integer stepPosition) {
+        StepsNavigationActivity.navigate(this, recipe.steps(), stepPosition);
+    }
+
 }
