@@ -6,6 +6,7 @@ ext {
     DAGGER_VERSION = '2.10'
     BUTTERKNIFE_VERSION = '8.5.1'
     AUTO_VALUES_VERSION = '1.2'
+    EXOPLAYER_VERSION = 'r2.2.0'
 }
 
 android {
@@ -68,6 +69,9 @@ dependencies {
 
     compile "com.google.dagger:dagger:$DAGGER_VERSION"
     annotationProcessor "com.google.dagger:dagger-compiler:$DAGGER_VERSION"
+
+    // Media
+    compile "com.google.android.exoplayer:exoplayer:$EXOPLAYER_VERSION"
 
     // Utils
     compile 'com.annimon:stream:1.1.9'

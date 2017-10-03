@@ -18,6 +18,11 @@
 
     <!-- Step Detail -->
     <dimen name="step_detail_margin">8dp</dimen>
+    <dimen name="step_detail_margin_large">16dp</dimen>
     <dimen name="step_detail_title_bottom_padding">16dp</dimen>
+
+    <!-- Player -->
+    <dimen name="player_padding">4dp</dimen>
+    <dimen name="player_seek_bar_height">32dp</dimen>
 
 </resources>
