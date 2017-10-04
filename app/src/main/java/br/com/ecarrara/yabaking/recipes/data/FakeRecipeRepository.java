@@ -9,11 +9,13 @@ import br.com.ecarrara.yabaking.ingredients.domain.entity.Measure;
 import br.com.ecarrara.yabaking.recipes.domain.RecipesRepository;
 import br.com.ecarrara.yabaking.recipes.domain.entity.Recipe;
 import br.com.ecarrara.yabaking.steps.domain.entity.Step;
+import io.reactivex.Completable;
 import io.reactivex.Single;
 
 public class FakeRecipeRepository implements RecipesRepository {
 
     List<Recipe> recipes;
+    Recipe recipeForDisplay = getFakeCookieRecipe();
 
     public FakeRecipeRepository() {
         recipes = new ArrayList<>();
@@ -32,6 +34,19 @@ public class FakeRecipeRepository implements RecipesRepository {
     @Override
     public Single<Recipe> get(Integer recipeId) {
         return Single.defer(() -> Single.just(recipes.get(recipeId)));
+    }
+
+    @Override
+    public Single<Recipe> getRecipeForWidgetDisplay() {
+        return Single.defer(() -> Single.just(recipeForDisplay));
+    }
+
+    @Override
+    public Completable setRecipeForWidgetDisplay(Recipe recipe) {
+        return Completable.defer(() -> {
+            recipeForDisplay = recipe;
+            return Completable.complete();
+        });
     }
 
     private Recipe getFakeCookieRecipe() {

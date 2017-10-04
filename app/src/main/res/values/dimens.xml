@@ -8,6 +8,8 @@
     <dimen name="list_single_line_padding_top_bottom">8dp</dimen>
     <dimen name="app_bar_elevation">4dp</dimen>
     <dimen name="card_resting_elevation">2dp</dimen>
+    <dimen name="widget_margin">8dp</dimen>
+    <dimen name="activity_default_margin">16dp</dimen>
 
     <!-- Recipe Details -->
     <dimen name="recipe_details_header_height">192dp</dimen>
@@ -24,5 +26,10 @@
     <!-- Player -->
     <dimen name="player_padding">4dp</dimen>
     <dimen name="player_seek_bar_height">32dp</dimen>
+
+    <!-- Ingredients Widget -->
+    <dimen name="ingredients_widget_background_corner_radius">4dp</dimen>
+    <dimen name="ingredients_widget_background_border_width">2dp</dimen>
+    <dimen name="ingredients_widget_ingredients_list_divider_height">1dp</dimen>
 
 </resources>

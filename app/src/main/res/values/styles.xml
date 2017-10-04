@@ -66,4 +66,8 @@
         <item name="android:layout_height">@dimen/player_seek_bar_height</item>
     </style>
 
+    <style name="Title.IngredientsWidget">
+        <item name="android:textColor">@color/primary</item>
+    </style>
+
 </resources>
