@@ -25,7 +25,15 @@ public abstract class Recipe implements Parcelable {
 
     public static Builder builder() {
         return new AutoValue_Recipe.Builder()
-                .setIngredients(Collections.emptyList());
+                .setId(-1)
+                .setName("")
+                .setImageUrl("")
+                .setIngredients(Collections.emptyList())
+                .setSteps(Collections.emptyList());
+    }
+
+    public boolean isValid() {
+        return ( id() >= 0 && !name().isEmpty() && !ingredients().isEmpty() && !steps().isEmpty() );
     }
 
     @AutoValue.Builder

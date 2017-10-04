@@ -15,6 +15,9 @@ import br.com.ecarrara.yabaking.ingredients.presentation.IngredientFormatter;
 import br.com.ecarrara.yabaking.recipes.domain.entity.Recipe;
 import br.com.ecarrara.yabaking.recipes.presentation.details.RecipeDetailsActivity;
 
+import static android.view.View.GONE;
+import static android.view.View.VISIBLE;
+
 public class IngredientsWidgetProvider extends AppWidgetProvider {
 
     /**
@@ -39,15 +42,24 @@ public class IngredientsWidgetProvider extends AppWidgetProvider {
                                         int appWidgetId,
                                         Recipe recipe) {
 
-        RemoteViews widgetRemoteView = getIngredientListToUpdate(context, recipe);
-        widgetRemoteView.setTextViewText(R.id.ingredients_widget_recipe_name, recipe.name());
-
+        RemoteViews widgetRemoteView;
         Intent reconfigurationIntent = new Intent(context, IngredientsWidgetProviderConfigurationActivity.class);
         reconfigurationIntent.putExtra(AppWidgetManager.EXTRA_APPWIDGET_ID, appWidgetId);
         PendingIntent reconfigurationPendingIntent = PendingIntent.getActivity(context, appWidgetId,
                 reconfigurationIntent, 0);
-        widgetRemoteView.setOnClickPendingIntent(R.id.ingredients_widget_recipe_name, reconfigurationPendingIntent);
-        widgetRemoteView.setOnClickPendingIntent(R.id.ingredients_widget_edit_recipe, reconfigurationPendingIntent);
+
+        if (recipe.isValid()) {
+            widgetRemoteView = getIngredientListToUpdate(context, recipe);
+            widgetRemoteView.setTextViewText(R.id.ingredients_widget_recipe_name, recipe.name());
+            widgetRemoteView.setOnClickPendingIntent(R.id.ingredients_widget_recipe_name, reconfigurationPendingIntent);
+            widgetRemoteView.setOnClickPendingIntent(R.id.ingredients_widget_edit_recipe, reconfigurationPendingIntent);
+            widgetRemoteView.setViewVisibility(R.id.ingredients_widget_empty_view, GONE);
+        } else {
+            widgetRemoteView = new RemoteViews(context.getPackageName(), R.layout.ingredients_widget_provider);
+            widgetRemoteView.setOnClickPendingIntent(R.id.ingredients_widget_empty_view, reconfigurationPendingIntent);
+            widgetRemoteView.setEmptyView(R.id.ingredients_widget_content_frame, R.id.ingredients_widget_empty_view);
+            widgetRemoteView.setViewVisibility(R.id.ingredients_widget_empty_view, VISIBLE);
+        }
 
         appWidgetManager.updateAppWidget(appWidgetId, widgetRemoteView);
     }

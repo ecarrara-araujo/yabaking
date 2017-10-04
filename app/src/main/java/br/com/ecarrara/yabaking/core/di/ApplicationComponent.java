@@ -13,6 +13,7 @@ import dagger.Component;
 @Singleton
 @Component(modules = {
         ApplicationModule.class,
+        NetworkingModule.class,
         RecipesModule.class
 })
 public interface ApplicationComponent {
