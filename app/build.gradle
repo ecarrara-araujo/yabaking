@@ -6,7 +6,10 @@ ext {
     DAGGER_VERSION = '2.10'
     BUTTERKNIFE_VERSION = '8.5.1'
     AUTO_VALUES_VERSION = '1.2'
+    AUTO_VALUES_GSON_VERSION = '0.4.5'
     EXOPLAYER_VERSION = 'r2.2.0'
+    RETROFIT_VERSION = '2.1.0'
+    OKHTTP_VERSION = '3.4.1'
 }
 
 android {
@@ -54,6 +57,14 @@ dependencies {
     // Logging
     compile 'com.jakewharton.timber:timber:4.5.1'
 
+    // Networking Libs
+    compile 'com.google.code.gson:gson:2.8.0'
+    compile "com.squareup.retrofit2:retrofit:$RETROFIT_VERSION"
+    compile "com.squareup.retrofit2:converter-gson:$RETROFIT_VERSION"
+    compile "com.squareup.retrofit2:adapter-rxjava2:2.3.0"
+    compile "com.squareup.okhttp3:okhttp:$OKHTTP_VERSION"
+    compile "com.squareup.okhttp3:logging-interceptor:$OKHTTP_VERSION"
+
     // Reactive Libs
     compile 'io.reactivex.rxjava2:rxjava:2.1.3'
     compile 'io.reactivex.rxjava2:rxandroid:2.0.1'
@@ -62,6 +73,8 @@ dependencies {
     compile "com.google.auto.value:auto-value:$AUTO_VALUES_VERSION"
     annotationProcessor "com.google.auto.value:auto-value:$AUTO_VALUES_VERSION"
     annotationProcessor "com.ryanharter.auto.value:auto-value-parcel:0.2.5"
+    annotationProcessor "com.ryanharter.auto.value:auto-value-gson:$AUTO_VALUES_GSON_VERSION"
+    provided "com.ryanharter.auto.value:auto-value-gson:$AUTO_VALUES_GSON_VERSION"
 
     // Dependency Injection
     compile "com.jakewharton:butterknife:$BUTTERKNIFE_VERSION"
