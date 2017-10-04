@@ -32,6 +32,10 @@ public abstract class Recipe implements Parcelable {
                 .setSteps(Collections.emptyList());
     }
 
+    public boolean isValid() {
+        return ( id() >= 0 && !name().isEmpty() && !ingredients().isEmpty() && !steps().isEmpty() );
+    }
+
     @AutoValue.Builder
     public abstract static class Builder {
 

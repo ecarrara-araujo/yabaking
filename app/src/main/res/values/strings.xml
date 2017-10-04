@@ -30,5 +30,6 @@
     <!-- Ingredients Widget -->
     <string name="ingredients_widget_select_a_recipe">Select a recipe</string>
     <string name="ingredients_widget_ingredients_label">Ingredients</string>
+    <string name="ingredients_widget_empty_message">No recipe configured. Touch to select!</string>
 
 </resources>
