@@ -7,7 +7,7 @@ import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentStatePagerAdapter;
 
 import br.com.ecarrara.yabaking.R;
-import br.com.ecarrara.yabaking.ingredients.presentation.IngredientsListFragment;
+import br.com.ecarrara.yabaking.ingredients.presentation.listing.IngredientsListFragment;
 import br.com.ecarrara.yabaking.recipes.domain.entity.Recipe;
 import br.com.ecarrara.yabaking.steps.presentation.listing.StepsListFragment;
 import br.com.ecarrara.yabaking.steps.presentation.navigating.StepSelectedListener;

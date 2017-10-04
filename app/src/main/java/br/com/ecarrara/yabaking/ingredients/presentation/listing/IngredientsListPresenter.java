@@ -1,4 +1,4 @@
-package br.com.ecarrara.yabaking.ingredients.presentation;
+package br.com.ecarrara.yabaking.ingredients.presentation.listing;
 
 import java.util.List;
 
@@ -6,6 +6,7 @@ import javax.inject.Inject;
 
 import br.com.ecarrara.yabaking.core.presentation.LoadDataPresenter;
 import br.com.ecarrara.yabaking.ingredients.domain.entity.Ingredient;
+import br.com.ecarrara.yabaking.ingredients.presentation.IngredientFormatter;
 
 class IngredientsListPresenter extends LoadDataPresenter<IngredientsListFragment, List<Ingredient>> {
 

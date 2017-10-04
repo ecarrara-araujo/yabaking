@@ -12,22 +12,44 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-
         <activity android:name=".recipes.presentation.listing.RecipesListActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
+
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
 
         <activity
             android:name=".recipes.presentation.details.RecipeDetailsActivity"
-            android:parentActivityName=".recipes.presentation.listing.RecipesListActivity"
             android:launchMode="singleTop"
+            android:parentActivityName=".recipes.presentation.listing.RecipesListActivity"
             android:theme="@style/AppTheme.Base.NoActionBar" />
 
-        <activity android:name=".steps.presentation.navigating.StepsNavigationActivity"
+        <activity
+            android:name=".steps.presentation.navigating.StepsNavigationActivity"
             android:parentActivityName=".recipes.presentation.details.RecipeDetailsActivity" />
+
+        <activity android:name=".ingredients.presentation.widget.IngredientsWidgetProviderConfigurationActivity">
+            <intent-filter>
+                <action android:name="android.appwidget.action.APPWIDGET_CONFIGURE" />
+            </intent-filter>
+        </activity>
+
+        <receiver android:name=".ingredients.presentation.widget.IngredientsWidgetProvider">
+            <intent-filter>
+                <action android:name="android.appwidget.action.APPWIDGET_UPDATE" />
+            </intent-filter>
+
+            <meta-data
+                android:name="android.appwidget.provider"
+                android:resource="@xml/ingredients_widget_provider_info" />
+        </receiver>
+
+        <service android:name=".ingredients.presentation.widget.IngredientsRefreshService"/>
+
+        <service android:name=".ingredients.presentation.widget.RemoteIngredientsListAdapterService"
+            android:permission="android.permission.BIND_REMOTEVIEWS"/>
 
     </application>
 

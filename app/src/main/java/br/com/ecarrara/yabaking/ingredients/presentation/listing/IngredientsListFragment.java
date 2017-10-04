@@ -1,4 +1,4 @@
-package br.com.ecarrara.yabaking.ingredients.presentation;
+package br.com.ecarrara.yabaking.ingredients.presentation.listing;
 
 import android.os.Bundle;
 import android.support.annotation.Nullable;
