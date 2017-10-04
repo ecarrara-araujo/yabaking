@@ -1,4 +1,4 @@
-package br.com.ecarrara.yabaking.ingredients.presentation;
+package br.com.ecarrara.yabaking.ingredients.presentation.listing;
 
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;

@@ -23,7 +23,7 @@ import static br.com.ecarrara.yabaking.ingredients.domain.entity.Measure.TABLE_S
 import static br.com.ecarrara.yabaking.ingredients.domain.entity.Measure.TEA_SPOON;
 import static br.com.ecarrara.yabaking.ingredients.domain.entity.Measure.UNIT;
 
-class IngredientFormatter {
+public class IngredientFormatter {
 
     private Context context;
     private NumberFormat numberFormat;
