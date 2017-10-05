@@ -5,28 +5,47 @@ import android.content.Intent;
 import android.widget.RemoteViews;
 import android.widget.RemoteViewsService;
 
+import java.util.ArrayList;
 import java.util.List;
 
+import javax.inject.Inject;
+
 import br.com.ecarrara.yabaking.R;
+import br.com.ecarrara.yabaking.core.di.Injector;
+import br.com.ecarrara.yabaking.ingredients.presentation.IngredientFormatter;
+import br.com.ecarrara.yabaking.recipes.domain.RecipesRepository;
+import br.com.ecarrara.yabaking.recipes.domain.entity.Recipe;
+import timber.log.Timber;
 
 public class RemoteIngredientsListViewsFactory implements RemoteViewsService.RemoteViewsFactory {
+
+    @Inject
+    RecipesRepository recipesRepository;
 
     private static final int NUMBER_OF_VIEW_TYPES = 1;
 
     private Context applicationContext;
-    private List<String> ingredientsDescription;
+    private IngredientFormatter ingredientFormatter;
+    private List<String> ingredientsDescription = new ArrayList<>();
 
-    RemoteIngredientsListViewsFactory(Context applicationContext,
-                                      List<String> ingredientsDescription) {
+    RemoteIngredientsListViewsFactory(Context applicationContext) {
         this.applicationContext = applicationContext;
-        this.ingredientsDescription = ingredientsDescription;
+        this.ingredientFormatter = new IngredientFormatter(applicationContext);
+        Injector.applicationComponent().inject(this);
     }
 
     @Override
     public void onCreate() { /* Do nothing */ }
 
     @Override
-    public void onDataSetChanged() { /* Do nothing */ }
+    public void onDataSetChanged() {
+        try {
+            Recipe currentConfiguredRecipe = recipesRepository.getRecipeForWidgetDisplay().blockingGet();
+            ingredientsDescription = ingredientFormatter.formatIngredients(currentConfiguredRecipe.ingredients());
+        } catch (RuntimeException exception) {
+            Timber.e(exception.getMessage());
+        }
+    }
 
     @Override
     public void onDestroy() { /* Do nothing */ }

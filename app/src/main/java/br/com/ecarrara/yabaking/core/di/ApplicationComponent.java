@@ -5,6 +5,7 @@ import javax.inject.Singleton;
 import br.com.ecarrara.yabaking.ingredients.presentation.listing.IngredientsListFragment;
 import br.com.ecarrara.yabaking.ingredients.presentation.widget.IngredientsRefreshService;
 import br.com.ecarrara.yabaking.ingredients.presentation.widget.IngredientsWidgetProviderConfigurationActivity;
+import br.com.ecarrara.yabaking.ingredients.presentation.widget.RemoteIngredientsListViewsFactory;
 import br.com.ecarrara.yabaking.recipes.di.RecipesModule;
 import br.com.ecarrara.yabaking.recipes.presentation.listing.RecipesListActivity;
 import br.com.ecarrara.yabaking.steps.presentation.listing.StepsListFragment;
@@ -27,5 +28,7 @@ public interface ApplicationComponent {
     void inject(IngredientsRefreshService ingredientsRefreshService);
 
     void inject(IngredientsWidgetProviderConfigurationActivity ingredientsWidgetProviderConfigurationActivity);
+
+    void inject(RemoteIngredientsListViewsFactory remoteIngredientsListViewsFactory);
 
 }

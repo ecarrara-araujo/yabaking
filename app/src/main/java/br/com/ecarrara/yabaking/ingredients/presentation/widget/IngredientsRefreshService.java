@@ -13,6 +13,7 @@ import br.com.ecarrara.yabaking.R;
 import br.com.ecarrara.yabaking.core.di.Injector;
 import br.com.ecarrara.yabaking.recipes.domain.RecipesRepository;
 import br.com.ecarrara.yabaking.recipes.domain.entity.Recipe;
+import timber.log.Timber;
 
 public class IngredientsRefreshService extends IntentService {
 
@@ -51,7 +52,13 @@ public class IngredientsRefreshService extends IntentService {
     }
 
     private void handleIngredientsListRefreshAction() {
-        Recipe userSelectedRecipe = recipesRepository.getRecipeForWidgetDisplay().blockingGet();
+        Recipe userSelectedRecipe = Recipe.builder().build();
+
+        try {
+            userSelectedRecipe = recipesRepository.getRecipeForWidgetDisplay().blockingGet();
+        } catch (RuntimeException exception) {
+            Timber.e(exception.getMessage());
+        }
 
         AppWidgetManager widgetManager = AppWidgetManager.getInstance(this);
         int[] widgetsIds = widgetManager.getAppWidgetIds(new ComponentName(this, IngredientsWidgetProvider.class));

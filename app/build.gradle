@@ -10,6 +10,7 @@ ext {
     EXOPLAYER_VERSION = 'r2.2.0'
     RETROFIT_VERSION = '2.1.0'
     OKHTTP_VERSION = '3.4.1'
+    DBFLOW_VERSION = '4.1.1'
 }
 
 android {
@@ -85,6 +86,12 @@ dependencies {
 
     // Media
     compile "com.google.android.exoplayer:exoplayer:$EXOPLAYER_VERSION"
+
+    // Local Database
+    annotationProcessor "com.github.Raizlabs.DBFlow:dbflow-processor:${DBFLOW_VERSION}"
+    compile "com.github.Raizlabs.DBFlow:dbflow-core:${DBFLOW_VERSION}"
+    compile "com.github.Raizlabs.DBFlow:dbflow:${DBFLOW_VERSION}"
+    compile "com.github.Raizlabs.DBFlow:dbflow-rx2:${DBFLOW_VERSION}"
 
     // Utils
     compile 'com.annimon:stream:1.1.9'
