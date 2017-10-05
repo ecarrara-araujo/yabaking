@@ -13,6 +13,8 @@ import br.com.ecarrara.yabaking.steps.domain.entity.Step;
 @AutoValue
 public abstract class Recipe implements Parcelable {
 
+    public static final int INVALID_ID = -1;
+
     public abstract Integer id();
 
     public abstract String name();
