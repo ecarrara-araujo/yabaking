@@ -56,24 +56,18 @@ public class IngredientsWidgetProvider extends AppWidgetProvider {
             widgetRemoteView.setViewVisibility(R.id.ingredients_widget_empty_view, GONE);
         } else {
             widgetRemoteView = new RemoteViews(context.getPackageName(), R.layout.ingredients_widget_provider);
-            widgetRemoteView.setOnClickPendingIntent(R.id.ingredients_widget_empty_view, reconfigurationPendingIntent);
             widgetRemoteView.setEmptyView(R.id.ingredients_widget_content_frame, R.id.ingredients_widget_empty_view);
             widgetRemoteView.setViewVisibility(R.id.ingredients_widget_empty_view, VISIBLE);
+            widgetRemoteView.setOnClickPendingIntent(R.id.ingredients_widget_empty_view, reconfigurationPendingIntent);
         }
 
+        appWidgetManager.notifyAppWidgetViewDataChanged(appWidgetId, R.id.ingredients_widget_list_view);
         appWidgetManager.updateAppWidget(appWidgetId, widgetRemoteView);
     }
 
     private static RemoteViews getIngredientListToUpdate(Context context, Recipe recipe) {
         RemoteViews ingredientsListView = new RemoteViews(context.getPackageName(), R.layout.ingredients_widget_provider);
         Intent remoteAdapterIntent = new Intent(context, RemoteIngredientsListAdapterService.class);
-
-        IngredientFormatter ingredientsFormatter = new IngredientFormatter(context);
-        List<String> ingredientsDescription = ingredientsFormatter.formatIngredients(recipe.ingredients());
-        ArrayList<String> ingredientsToBeBundled = new ArrayList<>(ingredientsDescription.size());
-        ingredientsToBeBundled.addAll(ingredientsDescription);
-
-        remoteAdapterIntent.putStringArrayListExtra(RemoteIngredientsListAdapterService.EXTRA_INGREDIENTS_LIST, ingredientsToBeBundled);
         ingredientsListView.setRemoteAdapter(R.id.ingredients_widget_list_view, remoteAdapterIntent);
 
         Intent recipeDetailIntent = new Intent(context, RecipeDetailsActivity.class);
