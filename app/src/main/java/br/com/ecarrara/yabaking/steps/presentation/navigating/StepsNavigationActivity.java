@@ -18,6 +18,7 @@ import br.com.ecarrara.yabaking.steps.domain.entity.Step;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
+import butterknife.Optional;
 
 import static android.view.View.INVISIBLE;
 import static android.view.View.VISIBLE;
@@ -45,9 +46,11 @@ public class StepsNavigationActivity extends AppCompatActivity {
     @BindView(R.id.step_details_view_pager)
     ViewPager stepDetailViewPager;
 
+    @Nullable
     @BindView(R.id.step_details_next_button)
     Button nextStepButton;
 
+    @Nullable
     @BindView(R.id.step_details_previous_button)
     Button previousStepButton;
 
@@ -63,21 +66,32 @@ public class StepsNavigationActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.step_details_navigation_activity);
         ButterKnife.bind(this);
+        setUpViewForFullscreen();
         processExtras(getIntent().getExtras());
         processSavedInstanceState(savedInstanceState);
         setUpActionBar();
         setUpViewPager();
     }
 
+    private void setUpViewForFullscreen() {
+        if (isOnLandscapeLayout()) {
+            View decorView = getWindow().getDecorView();
+            int uiOptions = decorView.getSystemUiVisibility();
+            uiOptions ^= View.SYSTEM_UI_FLAG_HIDE_NAVIGATION;
+            uiOptions ^= View.SYSTEM_UI_FLAG_FULLSCREEN;
+            decorView.setSystemUiVisibility(uiOptions);
+        }
+    }
+
     private void processExtras(Bundle extras) {
-        if(extras != null) {
+        if (extras != null) {
             steps = extras.getParcelableArrayList(ARGUMENT_STEPS_KEY);
             currentStepListPosition = extras.getInt(ARGUMENT_CURRENT_STEP_KEY);
         }
     }
 
     private void processSavedInstanceState(Bundle savedInstanceState) {
-        if(savedInstanceState != null && steps == null) {
+        if (savedInstanceState != null && steps == null) {
             steps = savedInstanceState.getParcelableArrayList(LAST_KNOWN_STEPS);
             currentStepListPosition = savedInstanceState.getInt(LAST_KNOWN_CURRENT_STEP_LIST_POSITION);
         }
@@ -85,7 +99,13 @@ public class StepsNavigationActivity extends AppCompatActivity {
 
     private void setUpActionBar() {
         ActionBar actionBar = getSupportActionBar();
-        if (actionBar != null) {
+        if (actionBar == null) {
+            return;
+        }
+
+        if (isOnLandscapeLayout()) {
+            actionBar.hide();
+        } else {
             actionBar.setDisplayHomeAsUpEnabled(true);
             actionBar.setTitle(R.string.step_details_recipe_steps);
         }
@@ -107,11 +127,13 @@ public class StepsNavigationActivity extends AppCompatActivity {
         super.onSaveInstanceState(outState);
     }
 
+    @Optional
     @OnClick(R.id.step_details_next_button)
     public void nextStep(View view) {
         navigateToStepInPosition(currentStepListPosition + 1);
     }
 
+    @Optional
     @OnClick(R.id.step_details_previous_button)
     public void previousStep(View view) {
         navigateToStepInPosition(currentStepListPosition - 1);
@@ -124,17 +146,25 @@ public class StepsNavigationActivity extends AppCompatActivity {
     }
 
     private void onStepChanged() {
-        if(currentStepListPosition == INITIAL_STEP_POSITION) {
+        if (isOnLandscapeLayout()) {
+            return;
+        }
+
+        if (currentStepListPosition == INITIAL_STEP_POSITION) {
             previousStepButton.setVisibility(INVISIBLE);
         } else {
             previousStepButton.setVisibility(VISIBLE);
         }
 
-        if(currentStepListPosition == steps.size() - 1) {
+        if (currentStepListPosition == steps.size() - 1) {
             nextStepButton.setVisibility(INVISIBLE);
         } else {
             nextStepButton.setVisibility(VISIBLE);
         }
+    }
+
+    private boolean isOnLandscapeLayout() {
+        return (previousStepButton == null || nextStepButton == null);
     }
 
 }

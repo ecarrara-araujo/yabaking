@@ -1,6 +1,5 @@
 package br.com.ecarrara.yabaking.steps.presentation.navigating;
 
-import android.graphics.BitmapFactory;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
@@ -12,26 +11,17 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import com.google.android.exoplayer2.DefaultLoadControl;
-import com.google.android.exoplayer2.ExoPlayerFactory;
-import com.google.android.exoplayer2.LoadControl;
 import com.google.android.exoplayer2.SimpleExoPlayer;
-import com.google.android.exoplayer2.extractor.DefaultExtractorsFactory;
-import com.google.android.exoplayer2.source.ExtractorMediaSource;
-import com.google.android.exoplayer2.source.MediaSource;
-import com.google.android.exoplayer2.trackselection.DefaultTrackSelector;
-import com.google.android.exoplayer2.trackselection.TrackSelector;
 import com.google.android.exoplayer2.ui.SimpleExoPlayerView;
-import com.google.android.exoplayer2.upstream.DefaultDataSourceFactory;
-import com.google.android.exoplayer2.util.Util;
 import com.squareup.picasso.Picasso;
 
 import br.com.ecarrara.yabaking.R;
+import br.com.ecarrara.yabaking.core.utils.ExoPlayerManager;
 import br.com.ecarrara.yabaking.steps.domain.entity.Step;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 
-import static android.view.View.INVISIBLE;
+import static android.view.View.VISIBLE;
 
 public class StepDetailFragment extends Fragment {
 
@@ -39,6 +29,7 @@ public class StepDetailFragment extends Fragment {
 
     /**
      * Create a new Step Detail View for the informed step
+     *
      * @param step to be rendered by the view
      * @return the prepared view
      */
@@ -59,6 +50,7 @@ public class StepDetailFragment extends Fragment {
     @BindView(R.id.step_detail_short_description_text_view)
     TextView shortDescriptionTextView;
 
+    @Nullable
     @BindView(R.id.step_detail_description_text_view)
     TextView descriptionTextView;
 
@@ -82,7 +74,7 @@ public class StepDetailFragment extends Fragment {
     }
 
     private void processSavedInstanceState(Bundle savedInstanceState) {
-        if(savedInstanceState != null && step == null) {
+        if (savedInstanceState != null && step == null) {
             step = savedInstanceState.getParcelable(LAST_KNOWN_STEP);
         }
     }
@@ -97,20 +89,22 @@ public class StepDetailFragment extends Fragment {
     }
 
     private void initialize() {
+        if (!isOnLandscapeLayout()) {
+            this.descriptionTextView.setText(step.description());
+        }
         this.shortDescriptionTextView.setText(step.shortDescription());
-        this.descriptionTextView.setText(step.description());
-
         setUpMediaContent();
     }
 
     private void setUpMediaContent() {
-        if(!step.videoPath().isEmpty()) {
-            setUpMediaPlayer();
-            setUpMediaSource();
+        if (!step.videoPath().isEmpty() && mediaPlayerView != null) {
+            ExoPlayerManager.getInstance()
+                    .prepareExoPlayerForUri(getContext(), Uri.parse(step.videoPath()), mediaPlayerView);
+            ExoPlayerManager.getInstance().goToForeground();
             return;
         }
 
-        if(!step.thumbnailPath().isEmpty()) {
+        if (!step.thumbnailPath().isEmpty()) {
             setUpStepImageView();
             return;
         }
@@ -118,29 +112,8 @@ public class StepDetailFragment extends Fragment {
         setUpEmptyImageView();
     }
 
-    private void setUpMediaPlayer() {
-        mediaPlayerView.setDefaultArtwork(BitmapFactory.decodeResource(getResources(), R.color.accent));
-
-        TrackSelector trackSelector = new DefaultTrackSelector();
-        LoadControl loadControl = new DefaultLoadControl();
-        mediaPlayer = ExoPlayerFactory.newSimpleInstance(getContext(), trackSelector, loadControl);
-        mediaPlayerView.setPlayer(mediaPlayer);
-    }
-
-    private void setUpMediaSource() {
-        final String APPLICATION_BASE_USER_AGENT = "YaBaking";
-        final String userAgent = Util.getUserAgent(getContext(), APPLICATION_BASE_USER_AGENT);
-        MediaSource mediaSource = new ExtractorMediaSource(
-                Uri.parse(step.videoPath()),
-                new DefaultDataSourceFactory(getContext(), userAgent),
-                new DefaultExtractorsFactory(),
-                null, null);
-        mediaPlayer.prepare(mediaSource);
-        mediaPlayer.getPlayWhenReady();
-    }
-
     private void setUpStepImageView() {
-        mediaPlayerView.setVisibility(INVISIBLE);
+        imageView.setVisibility(VISIBLE);
         Picasso.with(getContext())
                 .load(step.thumbnailPath())
                 .placeholder(R.color.primary)
@@ -149,9 +122,9 @@ public class StepDetailFragment extends Fragment {
     }
 
     private void setUpEmptyImageView() {
-        mediaPlayerView.setVisibility(INVISIBLE);
+        imageView.setVisibility(VISIBLE);
         int placeholderBackgroundColor;
-        if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
             placeholderBackgroundColor = getResources().getColor(R.color.primary, null);
         } else {
             placeholderBackgroundColor = getResources().getColor(R.color.primary);
@@ -160,23 +133,25 @@ public class StepDetailFragment extends Fragment {
     }
 
     @Override
-    public void onDestroy() {
-        super.onDestroy();
-        releasePlayer();
+    public void onPause() {
+        super.onPause();
+        ExoPlayerManager.getInstance().goToBackground();
     }
 
-    private void releasePlayer() {
-        if(mediaPlayer != null) {
-            mediaPlayer.stop();
-            mediaPlayer.release();
-            mediaPlayer = null;
-        }
+    @Override
+    public void onDestroyView() {
+        super.onDestroyView();
+        ExoPlayerManager.getInstance().releasePlayer();
     }
 
     @Override
     public void onSaveInstanceState(Bundle outState) {
         outState.putParcelable(LAST_KNOWN_STEP, step);
         super.onSaveInstanceState(outState);
+    }
+
+    private boolean isOnLandscapeLayout() {
+        return (descriptionTextView == null);
     }
 
 }
