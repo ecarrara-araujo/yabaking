@@ -47,9 +47,6 @@ public class StepsNavigationActivity extends AppCompatActivity {
         ActivityCompat.startActivity(parentActivity, intent, null);
     }
 
-    public static final String LAST_KNOWN_STEPS = "steps";
-    public static final String LAST_KNOWN_CURRENT_STEP_LIST_POSITION = "current_step_list_position";
-
     @Inject
     @Named("stepSelectedEventBus")
     RxEventBus<Integer> stepSelectedEventBus;
@@ -69,11 +66,16 @@ public class StepsNavigationActivity extends AppCompatActivity {
     @BindView(R.id.step_details_step_list_container)
     FrameLayout stepsListContainer;
 
+    private static final String LAST_KNOWN_STEPS = "steps";
+    private static final String LAST_KNOWN_CURRENT_STEP_LIST_POSITION = "current_step_list_position";
+    private static final String STEPS_LIST_FRAGMENT_INSTANCE_KEY = "steps_list_fragment_instance";
+
     private static final int INITIAL_STEP_POSITION = 0;
 
     private List<Step> steps;
     private int currentStepListPosition = INITIAL_STEP_POSITION;
 
+    private StepsListFragment stepsListFragment;
     private StepsNavigationViewPagerAdapter stepsNavigationViewPagerAdapter;
     private Disposable stepSelectedEventBusDisposable;
 
@@ -103,12 +105,15 @@ public class StepsNavigationActivity extends AppCompatActivity {
 
     private void setUpViewForMultipane(@Nullable Bundle savedInstanceState) {
         if (isMultipaneLayout() && savedInstanceState == null) {
-            StepsListFragment stepsListFragment = StepsListFragment.newInstance(steps);
+            stepsListFragment = StepsListFragment.newInstance(steps);
             stepsListFragment.setHighlightSelected(true);
             stepsListFragment.setSelectedItemPosition(currentStepListPosition);
             getSupportFragmentManager().beginTransaction()
                     .add(R.id.step_details_step_list_container, stepsListFragment)
                     .commit();
+        } else {
+            stepsListFragment = (StepsListFragment) getSupportFragmentManager()
+                    .getFragment(savedInstanceState, STEPS_LIST_FRAGMENT_INSTANCE_KEY);
         }
     }
 
@@ -120,7 +125,7 @@ public class StepsNavigationActivity extends AppCompatActivity {
     }
 
     private void processSavedInstanceState(Bundle savedInstanceState) {
-        if (savedInstanceState != null && steps == null) {
+        if (savedInstanceState != null) {
             steps = savedInstanceState.getParcelableArrayList(LAST_KNOWN_STEPS);
             currentStepListPosition = savedInstanceState.getInt(LAST_KNOWN_CURRENT_STEP_LIST_POSITION);
         }
@@ -171,6 +176,9 @@ public class StepsNavigationActivity extends AppCompatActivity {
 
         outState.putParcelableArrayList(LAST_KNOWN_STEPS, stepsToBeBundled);
         outState.putInt(LAST_KNOWN_CURRENT_STEP_LIST_POSITION, stepDetailViewPager.getCurrentItem());
+
+        getSupportFragmentManager().putFragment(outState, STEPS_LIST_FRAGMENT_INSTANCE_KEY, stepsListFragment);
+
         super.onSaveInstanceState(outState);
     }
 
@@ -188,6 +196,7 @@ public class StepsNavigationActivity extends AppCompatActivity {
 
     private void navigateToStepInPosition(int position) {
         currentStepListPosition = position;
+        stepsListFragment.setSelectedItemPosition(position);
         stepDetailViewPager.setCurrentItem(position);
         onStepChanged();
     }
