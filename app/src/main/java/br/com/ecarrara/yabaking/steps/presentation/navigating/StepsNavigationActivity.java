@@ -104,16 +104,18 @@ public class StepsNavigationActivity extends AppCompatActivity {
     }
 
     private void setUpViewForMultipane(@Nullable Bundle savedInstanceState) {
-        if (isMultipaneLayout() && savedInstanceState == null) {
-            stepsListFragment = StepsListFragment.newInstance(steps);
-            stepsListFragment.setHighlightSelected(true);
-            stepsListFragment.setSelectedItemPosition(currentStepListPosition);
-            getSupportFragmentManager().beginTransaction()
-                    .add(R.id.step_details_step_list_container, stepsListFragment)
-                    .commit();
-        } else {
-            stepsListFragment = (StepsListFragment) getSupportFragmentManager()
-                    .getFragment(savedInstanceState, STEPS_LIST_FRAGMENT_INSTANCE_KEY);
+        if (isMultipaneLayout()) {
+            if(savedInstanceState == null) {
+                stepsListFragment = StepsListFragment.newInstance(steps);
+                stepsListFragment.setHighlightSelected(true);
+                stepsListFragment.setSelectedItemPosition(currentStepListPosition);
+                getSupportFragmentManager().beginTransaction()
+                        .add(R.id.step_details_step_list_container, stepsListFragment)
+                        .commit();
+            } else {
+                stepsListFragment = (StepsListFragment) getSupportFragmentManager()
+                        .getFragment(savedInstanceState, STEPS_LIST_FRAGMENT_INSTANCE_KEY);
+            }
         }
     }
 
@@ -177,7 +179,9 @@ public class StepsNavigationActivity extends AppCompatActivity {
         outState.putParcelableArrayList(LAST_KNOWN_STEPS, stepsToBeBundled);
         outState.putInt(LAST_KNOWN_CURRENT_STEP_LIST_POSITION, stepDetailViewPager.getCurrentItem());
 
-        getSupportFragmentManager().putFragment(outState, STEPS_LIST_FRAGMENT_INSTANCE_KEY, stepsListFragment);
+        if(isMultipaneLayout()) {
+            getSupportFragmentManager().putFragment(outState, STEPS_LIST_FRAGMENT_INSTANCE_KEY, stepsListFragment);
+        }
 
         super.onSaveInstanceState(outState);
     }
@@ -196,8 +200,10 @@ public class StepsNavigationActivity extends AppCompatActivity {
 
     private void navigateToStepInPosition(int position) {
         currentStepListPosition = position;
-        stepsListFragment.setSelectedItemPosition(position);
         stepDetailViewPager.setCurrentItem(position);
+        if(isMultipaneLayout()) {
+            stepsListFragment.setSelectedItemPosition(position);
+        }
         onStepChanged();
     }
 
