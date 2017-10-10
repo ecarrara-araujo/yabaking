@@ -19,7 +19,6 @@ import br.com.ecarrara.yabaking.core.di.Injector;
 import br.com.ecarrara.yabaking.core.presentation.LoadDataFragment;
 import br.com.ecarrara.yabaking.steps.domain.entity.Step;
 import br.com.ecarrara.yabaking.steps.presentation.navigating.StepSelectedListener;
-import br.com.ecarrara.yabaking.steps.presentation.navigating.StepsNavigationActivity;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 
@@ -28,10 +27,14 @@ import static android.view.View.VISIBLE;
 
 public class StepsListFragment extends LoadDataFragment<List<String>> {
 
+    public static final boolean NO_HIGHLIGHT = false;
+    public static final boolean HIGHLIGHT = true;
+
     private static final String ARGUMENT_STEPS_LIST = "steps_list";
 
     /**
      * Create a new Steps List View for the informed steps
+     *
      * @param steps to be rendered by the view
      * @return the prepared Ingredients List
      */
@@ -52,15 +55,30 @@ public class StepsListFragment extends LoadDataFragment<List<String>> {
     RecyclerView stepsListView;
 
     private static final String LAST_KNOWN_STEPS_LIST_POSITION_KEY = "last_known_steps_list_position";
+    private static final String LAST_KNOWN_SELECTED_ITEM_POSITION_KEY = "last_known_selected_item_position";
+    private static final String LAST_KNOWN_HIGHLIGHT_SELECTED_KEY = "last_known_highlight_selected";
+
     private static final int DEFAULT_STEPS_LIST_INITIAL_POSITION = 0;
+    private static final int NO_ITEM_SELECTED = -1;
 
     private int lastKnownStepsListPosition = DEFAULT_STEPS_LIST_INITIAL_POSITION;
     private StepsListAdapter stepsListAdapter;
     private ArrayList<Step> steps;
     private StepSelectedListener stepSelectedListener;
 
+    private boolean highlightSelected = NO_HIGHLIGHT;
+    private int selectedItemPosition = NO_ITEM_SELECTED;
+
     public void setStepSelectedListener(@NonNull StepSelectedListener stepSelectedListener) {
         this.stepSelectedListener = stepSelectedListener;
+    }
+
+    public void setHighlightSelected(boolean highlightSelected) {
+        this.highlightSelected = highlightSelected;
+    }
+
+    public void setSelectedItemPosition(int position) {
+        this.selectedItemPosition = position;
     }
 
     @Override
@@ -77,9 +95,13 @@ public class StepsListFragment extends LoadDataFragment<List<String>> {
     }
 
     private void processSavedInstanceState(Bundle savedInstanceState) {
-        if(savedInstanceState != null) {
+        if (savedInstanceState != null) {
             lastKnownStepsListPosition = savedInstanceState.getInt(
                     LAST_KNOWN_STEPS_LIST_POSITION_KEY, DEFAULT_STEPS_LIST_INITIAL_POSITION);
+            selectedItemPosition = savedInstanceState.getInt(
+                    LAST_KNOWN_SELECTED_ITEM_POSITION_KEY, NO_ITEM_SELECTED);
+            highlightSelected = savedInstanceState.getBoolean(
+                    LAST_KNOWN_HIGHLIGHT_SELECTED_KEY, NO_HIGHLIGHT);
         }
     }
 
@@ -100,7 +122,8 @@ public class StepsListFragment extends LoadDataFragment<List<String>> {
     private void setupRecyclerView() {
         LinearLayoutManager layoutManager = new LinearLayoutManager(getContext(),
                 LinearLayoutManager.VERTICAL, false);
-        stepsListAdapter = new StepsListAdapter(stepSelectedListener);
+        stepsListAdapter = new StepsListAdapter(stepSelectedListener, getContext());
+        stepsListAdapter.setHighlightSelected(highlightSelected);
         stepsListView.setAdapter(stepsListAdapter);
         stepsListView.setLayoutManager(layoutManager);
         stepsListView.setHasFixedSize(true);
@@ -116,6 +139,8 @@ public class StepsListFragment extends LoadDataFragment<List<String>> {
     public void onSaveInstanceState(Bundle outState) {
         outState.putInt(LAST_KNOWN_STEPS_LIST_POSITION_KEY,
                 ((LinearLayoutManager) stepsListView.getLayoutManager()).findFirstVisibleItemPosition());
+        outState.putInt(LAST_KNOWN_SELECTED_ITEM_POSITION_KEY, selectedItemPosition);
+        outState.putBoolean(LAST_KNOWN_HIGHLIGHT_SELECTED_KEY, highlightSelected);
         super.onSaveInstanceState(outState);
     }
 
@@ -133,7 +158,8 @@ public class StepsListFragment extends LoadDataFragment<List<String>> {
     }
 
     private void configureListPosition() {
-        if(stepsListAdapter.getItemCount() >= lastKnownStepsListPosition) {
+        stepsListAdapter.setSelectedPosition(selectedItemPosition);
+        if (stepsListAdapter.getItemCount() >= lastKnownStepsListPosition) {
             stepsListView.scrollToPosition(lastKnownStepsListPosition);
         }
     }

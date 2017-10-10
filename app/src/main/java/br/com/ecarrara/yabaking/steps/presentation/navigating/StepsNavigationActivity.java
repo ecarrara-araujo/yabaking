@@ -9,12 +9,14 @@ import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 import android.widget.Button;
+import android.widget.FrameLayout;
 
 import java.util.ArrayList;
 import java.util.List;
 
 import br.com.ecarrara.yabaking.R;
 import br.com.ecarrara.yabaking.steps.domain.entity.Step;
+import br.com.ecarrara.yabaking.steps.presentation.listing.StepsListFragment;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
@@ -23,8 +25,7 @@ import butterknife.Optional;
 import static android.view.View.INVISIBLE;
 import static android.view.View.VISIBLE;
 
-public class StepsNavigationActivity extends AppCompatActivity {
-
+public class StepsNavigationActivity extends AppCompatActivity implements StepSelectedListener {
 
     public static final String ARGUMENT_STEPS_KEY = "steps";
     public static final String ARGUMENT_CURRENT_STEP_KEY = "current_step";
@@ -54,6 +55,10 @@ public class StepsNavigationActivity extends AppCompatActivity {
     @BindView(R.id.step_details_previous_button)
     Button previousStepButton;
 
+    @Nullable
+    @BindView(R.id.step_details_step_list_container)
+    FrameLayout stepsListContainer;
+
     private static final int INITIAL_STEP_POSITION = 0;
 
     private List<Step> steps;
@@ -69,18 +74,36 @@ public class StepsNavigationActivity extends AppCompatActivity {
         setUpViewForFullscreen();
         processExtras(getIntent().getExtras());
         processSavedInstanceState(savedInstanceState);
+        setUpViewForMultipane(savedInstanceState);
         setUpActionBar();
         setUpViewPager();
     }
 
     private void setUpViewForFullscreen() {
-        if (isOnLandscapeLayout()) {
+        if (isFullscreenLayout() && !isMultipaneLayout()) {
             View decorView = getWindow().getDecorView();
             int uiOptions = decorView.getSystemUiVisibility();
             uiOptions ^= View.SYSTEM_UI_FLAG_HIDE_NAVIGATION;
             uiOptions ^= View.SYSTEM_UI_FLAG_FULLSCREEN;
             decorView.setSystemUiVisibility(uiOptions);
         }
+    }
+
+    private void setUpViewForMultipane(@Nullable Bundle savedInstanceState) {
+        if (isMultipaneLayout() && savedInstanceState == null) {
+            StepsListFragment stepsListFragment = StepsListFragment.newInstance(steps);
+            stepsListFragment.setStepSelectedListener(this);
+            stepsListFragment.setHighlightSelected(true);
+            stepsListFragment.setSelectedItemPosition(currentStepListPosition);
+            getSupportFragmentManager().beginTransaction()
+                    .add(R.id.step_details_step_list_container, stepsListFragment)
+                    .commit();
+        }
+    }
+
+    @Override
+    public void onStepSelected(Integer stepPosition) {
+        navigateToStepInPosition(stepPosition);
     }
 
     private void processExtras(Bundle extras) {
@@ -103,7 +126,7 @@ public class StepsNavigationActivity extends AppCompatActivity {
             return;
         }
 
-        if (isOnLandscapeLayout()) {
+        if (isFullscreenLayout()) {
             actionBar.hide();
         } else {
             actionBar.setDisplayHomeAsUpEnabled(true);
@@ -146,7 +169,7 @@ public class StepsNavigationActivity extends AppCompatActivity {
     }
 
     private void onStepChanged() {
-        if (isOnLandscapeLayout()) {
+        if (isFullscreenLayout() || isMultipaneLayout()) {
             return;
         }
 
@@ -163,8 +186,12 @@ public class StepsNavigationActivity extends AppCompatActivity {
         }
     }
 
-    private boolean isOnLandscapeLayout() {
-        return (previousStepButton == null || nextStepButton == null);
+    private boolean isFullscreenLayout() {
+        return (previousStepButton == null || nextStepButton == null) && !isMultipaneLayout();
+    }
+
+    private boolean isMultipaneLayout() {
+        return stepsListContainer != null;
     }
 
 }
