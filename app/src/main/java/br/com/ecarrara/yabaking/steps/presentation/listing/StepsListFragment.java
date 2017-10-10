@@ -21,6 +21,7 @@ import br.com.ecarrara.yabaking.steps.domain.entity.Step;
 import br.com.ecarrara.yabaking.steps.presentation.navigating.StepSelectedListener;
 import butterknife.BindView;
 import butterknife.ButterKnife;
+import butterknife.Unbinder;
 
 import static android.view.View.GONE;
 import static android.view.View.VISIBLE;
@@ -53,6 +54,8 @@ public class StepsListFragment extends LoadDataFragment<List<String>> {
 
     @BindView(R.id.steps_list_recycler_view)
     RecyclerView stepsListView;
+
+    private Unbinder butterKnifeUnbinder;
 
     private static final String LAST_KNOWN_STEPS_LIST_POSITION_KEY = "last_known_steps_list_position";
     private static final String LAST_KNOWN_SELECTED_ITEM_POSITION_KEY = "last_known_selected_item_position";
@@ -109,7 +112,7 @@ public class StepsListFragment extends LoadDataFragment<List<String>> {
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View inflatedView = inflater.inflate(R.layout.steps_list_fragment, container, false);
-        ButterKnife.bind(this, inflatedView);
+        butterKnifeUnbinder = ButterKnife.bind(this, inflatedView);
         initialize();
         return inflatedView;
     }
@@ -142,6 +145,12 @@ public class StepsListFragment extends LoadDataFragment<List<String>> {
         outState.putInt(LAST_KNOWN_SELECTED_ITEM_POSITION_KEY, selectedItemPosition);
         outState.putBoolean(LAST_KNOWN_HIGHLIGHT_SELECTED_KEY, highlightSelected);
         super.onSaveInstanceState(outState);
+    }
+
+    @Override
+    public void onDestroyView() {
+        super.onDestroyView();
+        butterKnifeUnbinder.unbind();
     }
 
     @Override

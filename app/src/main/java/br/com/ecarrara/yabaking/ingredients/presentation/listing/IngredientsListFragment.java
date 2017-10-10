@@ -19,6 +19,7 @@ import br.com.ecarrara.yabaking.core.presentation.LoadDataFragment;
 import br.com.ecarrara.yabaking.ingredients.domain.entity.Ingredient;
 import butterknife.BindView;
 import butterknife.ButterKnife;
+import butterknife.Unbinder;
 
 import static android.view.View.GONE;
 import static android.view.View.VISIBLE;
@@ -47,6 +48,8 @@ public class IngredientsListFragment extends LoadDataFragment<List<String>> {
 
     @BindView(R.id.ingredients_list_recycler_view)
     RecyclerView ingredientsListView;
+
+    private Unbinder butterKnifeUnbinder;
 
     private static final String LAST_KNOWN_INGREDIENTS_LIST = "last_known_ingredients_list";
     private static final String LAST_KNOWN_INGREDIENTS_LIST_POSITION_KEY = "last_known_ingredients_list_position";
@@ -81,7 +84,7 @@ public class IngredientsListFragment extends LoadDataFragment<List<String>> {
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View inflatedView = inflater.inflate(R.layout.ingredients_list_fragment, container, false);
-        ButterKnife.bind(this, inflatedView);
+        butterKnifeUnbinder = ButterKnife.bind(this, inflatedView);
         initialize();
         return inflatedView;
     }
@@ -112,6 +115,12 @@ public class IngredientsListFragment extends LoadDataFragment<List<String>> {
                 ((LinearLayoutManager)ingredientsListView.getLayoutManager()).findFirstVisibleItemPosition());
         outState.putParcelableArrayList(LAST_KNOWN_INGREDIENTS_LIST, ingredients);
         super.onSaveInstanceState(outState);
+    }
+
+    @Override
+    public void onDestroyView() {
+        super.onDestroyView();
+        butterKnifeUnbinder.unbind();
     }
 
     @Override

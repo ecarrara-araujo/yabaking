@@ -20,6 +20,7 @@ import br.com.ecarrara.yabaking.core.utils.ExoPlayerManager;
 import br.com.ecarrara.yabaking.steps.domain.entity.Step;
 import butterknife.BindView;
 import butterknife.ButterKnife;
+import butterknife.Unbinder;
 
 import static android.view.View.VISIBLE;
 
@@ -54,6 +55,8 @@ public class StepDetailFragment extends Fragment {
     @BindView(R.id.step_detail_description_text_view)
     TextView descriptionTextView;
 
+    private Unbinder butterKnifeUnbinder;
+
     private static final String LAST_KNOWN_STEP = "last_known_step";
 
     private Step step;
@@ -83,7 +86,7 @@ public class StepDetailFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View inflatedView = inflater.inflate(R.layout.step_details_fragment, container, false);
-        ButterKnife.bind(this, inflatedView);
+        butterKnifeUnbinder = ButterKnife.bind(this, inflatedView);
         initialize();
         return inflatedView;
     }
@@ -142,6 +145,7 @@ public class StepDetailFragment extends Fragment {
     public void onDestroyView() {
         super.onDestroyView();
         ExoPlayerManager.getInstance().releasePlayer();
+        butterKnifeUnbinder.unbind();
     }
 
     @Override
