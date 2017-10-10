@@ -14,18 +14,24 @@ import android.widget.FrameLayout;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.inject.Inject;
+import javax.inject.Named;
+
 import br.com.ecarrara.yabaking.R;
+import br.com.ecarrara.yabaking.core.di.Injector;
+import br.com.ecarrara.yabaking.core.utils.RxEventBus;
 import br.com.ecarrara.yabaking.steps.domain.entity.Step;
 import br.com.ecarrara.yabaking.steps.presentation.listing.StepsListFragment;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 import butterknife.Optional;
+import io.reactivex.disposables.Disposable;
 
 import static android.view.View.INVISIBLE;
 import static android.view.View.VISIBLE;
 
-public class StepsNavigationActivity extends AppCompatActivity implements StepSelectedListener {
+public class StepsNavigationActivity extends AppCompatActivity {
 
     public static final String ARGUMENT_STEPS_KEY = "steps";
     public static final String ARGUMENT_CURRENT_STEP_KEY = "current_step";
@@ -43,6 +49,10 @@ public class StepsNavigationActivity extends AppCompatActivity implements StepSe
 
     public static final String LAST_KNOWN_STEPS = "steps";
     public static final String LAST_KNOWN_CURRENT_STEP_LIST_POSITION = "current_step_list_position";
+
+    @Inject
+    @Named("stepSelectedEventBus")
+    RxEventBus<Integer> stepSelectedEventBus;
 
     @BindView(R.id.step_details_view_pager)
     ViewPager stepDetailViewPager;
@@ -65,11 +75,13 @@ public class StepsNavigationActivity extends AppCompatActivity implements StepSe
     private int currentStepListPosition = INITIAL_STEP_POSITION;
 
     private StepsNavigationViewPagerAdapter stepsNavigationViewPagerAdapter;
+    private Disposable stepSelectedEventBusDisposable;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.step_details_navigation_activity);
+        Injector.applicationComponent().inject(this);
         ButterKnife.bind(this);
         setUpViewForFullscreen();
         processExtras(getIntent().getExtras());
@@ -92,18 +104,12 @@ public class StepsNavigationActivity extends AppCompatActivity implements StepSe
     private void setUpViewForMultipane(@Nullable Bundle savedInstanceState) {
         if (isMultipaneLayout() && savedInstanceState == null) {
             StepsListFragment stepsListFragment = StepsListFragment.newInstance(steps);
-            stepsListFragment.setStepSelectedListener(this);
             stepsListFragment.setHighlightSelected(true);
             stepsListFragment.setSelectedItemPosition(currentStepListPosition);
             getSupportFragmentManager().beginTransaction()
                     .add(R.id.step_details_step_list_container, stepsListFragment)
                     .commit();
         }
-    }
-
-    @Override
-    public void onStepSelected(Integer stepPosition) {
-        navigateToStepInPosition(stepPosition);
     }
 
     private void processExtras(Bundle extras) {
@@ -138,6 +144,24 @@ public class StepsNavigationActivity extends AppCompatActivity implements StepSe
         stepsNavigationViewPagerAdapter = new StepsNavigationViewPagerAdapter(getSupportFragmentManager(), steps);
         stepDetailViewPager.setAdapter(stepsNavigationViewPagerAdapter);
         navigateToStepInPosition(currentStepListPosition);
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        stepSelectedEventBusDisposable = stepSelectedEventBus
+                .eventBus()
+                .subscribe(this::onStepSelected);
+    }
+
+    private void onStepSelected(Integer stepPosition) {
+        navigateToStepInPosition(stepPosition);
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        stepSelectedEventBusDisposable.dispose();
     }
 
     @Override

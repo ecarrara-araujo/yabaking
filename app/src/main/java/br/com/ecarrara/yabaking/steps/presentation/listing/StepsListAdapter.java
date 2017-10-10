@@ -11,18 +11,25 @@ import android.widget.TextView;
 
 import java.util.List;
 
+import javax.inject.Inject;
+import javax.inject.Named;
+
 import br.com.ecarrara.yabaking.R;
-import br.com.ecarrara.yabaking.steps.presentation.navigating.StepSelectedListener;
+import br.com.ecarrara.yabaking.core.di.Injector;
+import br.com.ecarrara.yabaking.core.utils.RxEventBus;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 
-class StepsListAdapter extends RecyclerView.Adapter<StepsListAdapter.ViewHolder> {
+public class StepsListAdapter extends RecyclerView.Adapter<StepsListAdapter.ViewHolder> {
+
+    @Inject
+    @Named("stepSelectedEventBus")
+    RxEventBus<Integer> stepSelectedEventBus;
 
     private static final int NO_ITEM_SELECTED = -1;
 
     private Context context;
     private List<String> steps;
-    private StepSelectedListener stepSelectedListener;
 
     private boolean highlightSelected;
     private int selectedItemPosition;
@@ -30,9 +37,9 @@ class StepsListAdapter extends RecyclerView.Adapter<StepsListAdapter.ViewHolder>
     private int selectedItemBackgroundColor;
     private int ordinaryItemBackgroundColor;
 
-    public StepsListAdapter(@NonNull StepSelectedListener stepSelectedListener, @NonNull Context context) {
+    public StepsListAdapter(@NonNull Context context) {
+        Injector.applicationComponent().inject(this);
         this.context = context;
-        this.stepSelectedListener = stepSelectedListener;
         this.highlightSelected = false;
         this.selectedItemPosition = NO_ITEM_SELECTED;
         selectedItemBackgroundColor = resolveColor(R.color.steps_list_selected_item_background_color);
@@ -102,12 +109,10 @@ class StepsListAdapter extends RecyclerView.Adapter<StepsListAdapter.ViewHolder>
 
         @Override
         public void onClick(View view) {
-            if (stepSelectedListener != null) {
-                int selectedPosition = getAdapterPosition();
-                stepSelectedListener.onStepSelected(selectedPosition);
-                StepsListAdapter.this.selectedItemPosition = selectedPosition;
-                notifyDataSetChanged();
-            }
+            int selectedPosition = getAdapterPosition();
+            stepSelectedEventBus.publish(selectedPosition);
+            StepsListAdapter.this.selectedItemPosition = selectedPosition;
+            notifyDataSetChanged();
         }
     }
 

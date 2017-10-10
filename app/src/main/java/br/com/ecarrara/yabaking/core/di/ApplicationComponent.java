@@ -7,8 +7,11 @@ import br.com.ecarrara.yabaking.ingredients.presentation.widget.IngredientsRefre
 import br.com.ecarrara.yabaking.ingredients.presentation.widget.IngredientsWidgetProviderConfigurationActivity;
 import br.com.ecarrara.yabaking.ingredients.presentation.widget.RemoteIngredientsListViewsFactory;
 import br.com.ecarrara.yabaking.recipes.di.RecipesModule;
+import br.com.ecarrara.yabaking.recipes.presentation.details.RecipeDetailsActivity;
 import br.com.ecarrara.yabaking.recipes.presentation.listing.RecipesListActivity;
+import br.com.ecarrara.yabaking.steps.presentation.listing.StepsListAdapter;
 import br.com.ecarrara.yabaking.steps.presentation.listing.StepsListFragment;
+import br.com.ecarrara.yabaking.steps.presentation.navigating.StepsNavigationActivity;
 import dagger.Component;
 
 @Singleton
@@ -30,5 +33,11 @@ public interface ApplicationComponent {
     void inject(IngredientsWidgetProviderConfigurationActivity ingredientsWidgetProviderConfigurationActivity);
 
     void inject(RemoteIngredientsListViewsFactory remoteIngredientsListViewsFactory);
+
+    void inject(RecipeDetailsActivity recipeDetailsActivity);
+
+    void inject(StepsListAdapter stepsListAdapter);
+
+    void inject(StepsNavigationActivity stepsNavigationActivity);
 
 }

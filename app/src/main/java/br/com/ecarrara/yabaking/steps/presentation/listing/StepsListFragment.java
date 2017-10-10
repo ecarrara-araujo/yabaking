@@ -1,7 +1,6 @@
 package br.com.ecarrara.yabaking.steps.presentation.listing;
 
 import android.os.Bundle;
-import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -18,7 +17,6 @@ import br.com.ecarrara.yabaking.R;
 import br.com.ecarrara.yabaking.core.di.Injector;
 import br.com.ecarrara.yabaking.core.presentation.LoadDataFragment;
 import br.com.ecarrara.yabaking.steps.domain.entity.Step;
-import br.com.ecarrara.yabaking.steps.presentation.navigating.StepSelectedListener;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.Unbinder;
@@ -67,14 +65,9 @@ public class StepsListFragment extends LoadDataFragment<List<String>> {
     private int lastKnownStepsListPosition = DEFAULT_STEPS_LIST_INITIAL_POSITION;
     private StepsListAdapter stepsListAdapter;
     private ArrayList<Step> steps;
-    private StepSelectedListener stepSelectedListener;
 
     private boolean highlightSelected = NO_HIGHLIGHT;
     private int selectedItemPosition = NO_ITEM_SELECTED;
-
-    public void setStepSelectedListener(@NonNull StepSelectedListener stepSelectedListener) {
-        this.stepSelectedListener = stepSelectedListener;
-    }
 
     public void setHighlightSelected(boolean highlightSelected) {
         this.highlightSelected = highlightSelected;
@@ -125,7 +118,7 @@ public class StepsListFragment extends LoadDataFragment<List<String>> {
     private void setupRecyclerView() {
         LinearLayoutManager layoutManager = new LinearLayoutManager(getContext(),
                 LinearLayoutManager.VERTICAL, false);
-        stepsListAdapter = new StepsListAdapter(stepSelectedListener, getContext());
+        stepsListAdapter = new StepsListAdapter(getContext());
         stepsListAdapter.setHighlightSelected(highlightSelected);
         stepsListView.setAdapter(stepsListAdapter);
         stepsListView.setLayoutManager(layoutManager);
