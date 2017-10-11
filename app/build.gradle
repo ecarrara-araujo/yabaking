@@ -3,6 +3,7 @@ apply plugin: 'me.tatarka.retrolambda'
 
 ext {
     ANDROID_SUPPORT_LIBS_VERSION = '26.0.1'
+    ANDROID_TEST_SUPPORT_LIBS_VERSION = '1.0.0'
     DAGGER_VERSION = '2.10'
     BUTTERKNIFE_VERSION = '8.5.1'
     AUTO_VALUES_VERSION = '1.2'
@@ -11,6 +12,7 @@ ext {
     RETROFIT_VERSION = '2.1.0'
     OKHTTP_VERSION = '3.4.1'
     DBFLOW_VERSION = '4.1.1'
+    ESPRESSO_VERSION = '3.0.0'
 }
 
 android {
@@ -98,10 +100,37 @@ dependencies {
 
     // Unit Tests
     testCompile 'junit:junit:4.12'
+    testCompile ("com.android.support.test:runner:${ANDROID_TEST_SUPPORT_LIBS_VERSION}", {
+        exclude group: 'com.android.support', module: 'support-annotations'
+    })
+    testCompile ("com.android.support.test:rules:${ANDROID_TEST_SUPPORT_LIBS_VERSION}", {
+        exclude group: 'com.android.support', module: 'support-annotations'
+    })
 
     // Instrumentation Tests
-    androidTestCompile('com.android.support.test.espresso:espresso-core:2.2.2', {
+    androidTestCompile ("com.android.support.test:runner:${ANDROID_TEST_SUPPORT_LIBS_VERSION}", {
         exclude group: 'com.android.support', module: 'support-annotations'
+    })
+    androidTestCompile ("com.android.support.test:rules:${ANDROID_TEST_SUPPORT_LIBS_VERSION}", {
+        exclude group: 'com.android.support', module: 'support-annotations'
+    })
+
+    androidTestCompile("com.android.support.test.espresso:espresso-core:$ESPRESSO_VERSION", {
+        exclude group: 'com.android.support', module: 'support-annotations'
+    })
+    androidTestCompile ("com.android.support.test.espresso:espresso-contrib:$ESPRESSO_VERSION", {
+        exclude group: 'com.android.support', module: 'appcompat'
+        exclude group: 'com.android.support', module: 'appcompat-v7'
+        exclude group: 'com.android.support', module: 'support-v4'
+        exclude group: 'com.android.support', module: 'support-annotations'
+        exclude group: 'com.android.support', module: 'design'
+        exclude module: 'recyclerview-v7'
+    })
+    androidTestCompile 'org.hamcrest:hamcrest-integration:1.3'
+    androidTestCompile ('com.squareup.rx.idler:rx2-idler:0.9.0', {
+        exclude group: 'com.android.support', module: 'support-annotations'
+        exclude group: 'io.reactivex.rxjava2', module: 'rxjava'
+        exclude group: 'org.reactivestreams', module: 'reactive-streams'
     })
 
 }
