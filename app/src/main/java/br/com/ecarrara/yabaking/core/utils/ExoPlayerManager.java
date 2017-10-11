@@ -3,7 +3,6 @@ package br.com.ecarrara.yabaking.core.utils;
 import android.content.Context;
 import android.net.Uri;
 import android.support.annotation.NonNull;
-import android.view.SurfaceView;
 
 import com.google.android.exoplayer2.DefaultLoadControl;
 import com.google.android.exoplayer2.ExoPlayerFactory;
@@ -18,73 +17,86 @@ import com.google.android.exoplayer2.ui.SimpleExoPlayerView;
 import com.google.android.exoplayer2.upstream.DefaultDataSourceFactory;
 import com.google.android.exoplayer2.util.Util;
 
-public class ExoPlayerManager {
+import java.util.Collection;
+import java.util.HashMap;
 
-    private static ExoPlayerManager exoPlayerManagerInstance;
+public final class ExoPlayerManager {
+
+    private static ExoPlayerManager instance;
 
     public static ExoPlayerManager getInstance() {
-        if (exoPlayerManagerInstance == null) {
-            exoPlayerManagerInstance = new ExoPlayerManager();
+        if (instance == null) {
+            instance = new ExoPlayerManager();
         }
-        return exoPlayerManagerInstance;
+        return instance;
     }
 
-    private SimpleExoPlayer simpleExoPlayer;
-    private Uri mediUri;
-    private boolean isPlaying;
+    private HashMap<Integer, SimpleExoPlayer> playersInUse = new HashMap<>();
 
-    public void prepareExoPlayerForUri(
+    private ExoPlayerManager() {
+    }
+
+    public void clearAllPlayers() {
+        Collection<SimpleExoPlayer> players = playersInUse.values();
+        for (SimpleExoPlayer player : players) {
+            player.release();
+        }
+        playersInUse.clear();
+    }
+
+    public void stopPlayerFor(int playerKey) {
+        if (playersInUse.containsKey(playerKey)) {
+            playersInUse.get(playerKey).stop();
+        }
+    }
+
+    public SimpleExoPlayer prepareExoPlayerForUri(
+            int playerKey,
             @NonNull Context context,
             @NonNull Uri uri,
-            @NonNull SimpleExoPlayerView simpleExoPlayerView) {
-        if (!uri.equals(mediUri) || simpleExoPlayer == null) {
-            mediUri = uri;
-            setUpMediaPlayer(context);
-            setUpMediaSource(context);
+            @NonNull SimpleExoPlayerView simpleExoPlayerView,
+            int currentWindow,
+            boolean playWhenReady,
+            long playbackPosition) {
+
+        SimpleExoPlayer simpleExoPlayer = playersInUse.get(playerKey);
+
+        if (simpleExoPlayer == null) {
+            simpleExoPlayer = setUpMediaPlayer(context);
+            simpleExoPlayerView.setPlayer(simpleExoPlayer);
+            simpleExoPlayer.setPlayWhenReady(playWhenReady);
+            simpleExoPlayer.seekTo(currentWindow, playbackPosition);
+            MediaSource mediaSource = setUpMediaSource(context, uri);
+            simpleExoPlayer.prepare(mediaSource, true, false);
+            playersInUse.put(playerKey, simpleExoPlayer);
+        } else {
+            simpleExoPlayer.seekTo(currentWindow, playbackPosition);
+            simpleExoPlayer.setPlayWhenReady(playWhenReady);
         }
 
-        simpleExoPlayer.clearVideoSurface();
-        simpleExoPlayer.setVideoSurfaceView((SurfaceView) simpleExoPlayerView.getVideoSurfaceView());
-        simpleExoPlayer.seekTo(simpleExoPlayer.getCurrentPosition() + 1);
-        simpleExoPlayerView.setPlayer(simpleExoPlayer);
+        return simpleExoPlayer;
     }
 
-    private void setUpMediaPlayer(Context context) {
+    private SimpleExoPlayer setUpMediaPlayer(Context context) {
         TrackSelector trackSelector = new DefaultTrackSelector();
         LoadControl loadControl = new DefaultLoadControl();
-        simpleExoPlayer = ExoPlayerFactory.newSimpleInstance(context, trackSelector, loadControl);
+        return ExoPlayerFactory.newSimpleInstance(context, trackSelector, loadControl);
     }
 
-    private void setUpMediaSource(Context context) {
+    private MediaSource setUpMediaSource(Context context, Uri mediUri) {
         final String APPLICATION_BASE_USER_AGENT = "YaBaking";
         final String userAgent = Util.getUserAgent(context, APPLICATION_BASE_USER_AGENT);
-        MediaSource mediaSource = new ExtractorMediaSource(
+        return new ExtractorMediaSource(
                 mediUri,
                 new DefaultDataSourceFactory(context, userAgent),
                 new DefaultExtractorsFactory(),
                 null, null);
-        simpleExoPlayer.prepare(mediaSource);
-        simpleExoPlayer.getPlayWhenReady();
     }
 
-    public void releasePlayer() {
-        if (simpleExoPlayer != null) {
-            simpleExoPlayer.stop();
+    public void releaseExoPlayer(int playerKey) {
+        if (playersInUse.containsKey(playerKey)) {
+            SimpleExoPlayer simpleExoPlayer = playersInUse.remove(playerKey);
             simpleExoPlayer.release();
-            simpleExoPlayer = null;
-        }
-    }
-
-    public void goToBackground() {
-        if (simpleExoPlayer != null) {
-            isPlaying = simpleExoPlayer.getPlayWhenReady();
-            simpleExoPlayer.setPlayWhenReady(false);
-        }
-    }
-
-    public void goToForeground() {
-        if (simpleExoPlayer != null) {
-            simpleExoPlayer.setPlayWhenReady(isPlaying);
         }
     }
 

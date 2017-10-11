@@ -19,6 +19,7 @@ import javax.inject.Named;
 
 import br.com.ecarrara.yabaking.R;
 import br.com.ecarrara.yabaking.core.di.Injector;
+import br.com.ecarrara.yabaking.core.utils.ExoPlayerManager;
 import br.com.ecarrara.yabaking.core.utils.RxEventBus;
 import br.com.ecarrara.yabaking.steps.domain.entity.Step;
 import br.com.ecarrara.yabaking.steps.presentation.listing.StepsListFragment;
@@ -105,7 +106,7 @@ public class StepsNavigationActivity extends AppCompatActivity {
 
     private void setUpViewForMultipane(@Nullable Bundle savedInstanceState) {
         if (isMultipaneLayout()) {
-            if(savedInstanceState == null) {
+            if (savedInstanceState == null) {
                 stepsListFragment = StepsListFragment.newInstance(steps);
                 stepsListFragment.setHighlightSelected(true);
                 stepsListFragment.setSelectedItemPosition(currentStepListPosition);
@@ -179,11 +180,17 @@ public class StepsNavigationActivity extends AppCompatActivity {
         outState.putParcelableArrayList(LAST_KNOWN_STEPS, stepsToBeBundled);
         outState.putInt(LAST_KNOWN_CURRENT_STEP_LIST_POSITION, stepDetailViewPager.getCurrentItem());
 
-        if(isMultipaneLayout()) {
+        if (isMultipaneLayout()) {
             getSupportFragmentManager().putFragment(outState, STEPS_LIST_FRAGMENT_INSTANCE_KEY, stepsListFragment);
         }
 
         super.onSaveInstanceState(outState);
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        ExoPlayerManager.getInstance().clearAllPlayers();
     }
 
     @Optional
@@ -199,12 +206,18 @@ public class StepsNavigationActivity extends AppCompatActivity {
     }
 
     private void navigateToStepInPosition(int position) {
+        stopCurrentMedia();
         currentStepListPosition = position;
         stepDetailViewPager.setCurrentItem(position);
-        if(isMultipaneLayout()) {
+        if (isMultipaneLayout()) {
             stepsListFragment.setSelectedItemPosition(position);
         }
         onStepChanged();
+    }
+
+    private void stopCurrentMedia() {
+        int currentStepId = steps.get(stepDetailViewPager.getCurrentItem()).id();
+        ExoPlayerManager.getInstance().stopPlayerFor(currentStepId);
     }
 
     private void onStepChanged() {

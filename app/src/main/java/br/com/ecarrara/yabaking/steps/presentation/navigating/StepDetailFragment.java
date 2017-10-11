@@ -58,10 +58,15 @@ public class StepDetailFragment extends Fragment {
     private Unbinder butterKnifeUnbinder;
 
     private static final String LAST_KNOWN_STEP = "last_known_step";
+    private static final String LAST_KNOWN_EXOPLAYER_CURRENT_WINDOW = "last_known_exoplayer_current_window";
+    private static final String LAST_KNOWN_EXOPLAYER_PLAY_WHEN_READY = "last_known_exoplayer_play_when_ready";
+    private static final String LAST_KNOWN_EXOPLAYER_PLAYBACK_POSITION = "last_known_exoplayer_playback_position";
 
     private Step step;
     private SimpleExoPlayer mediaPlayer;
-
+    private int currentWindow = 0;
+    private boolean playWhenReady = false;
+    private long playbackPosition = 0L;
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
@@ -77,8 +82,11 @@ public class StepDetailFragment extends Fragment {
     }
 
     private void processSavedInstanceState(Bundle savedInstanceState) {
-        if (savedInstanceState != null && step == null) {
+        if (savedInstanceState != null) {
             step = savedInstanceState.getParcelable(LAST_KNOWN_STEP);
+            currentWindow = savedInstanceState.getInt(LAST_KNOWN_EXOPLAYER_CURRENT_WINDOW);
+            playWhenReady = savedInstanceState.getBoolean(LAST_KNOWN_EXOPLAYER_PLAY_WHEN_READY);
+            playbackPosition = savedInstanceState.getLong(LAST_KNOWN_EXOPLAYER_PLAYBACK_POSITION);
         }
     }
 
@@ -96,23 +104,47 @@ public class StepDetailFragment extends Fragment {
             this.descriptionTextView.setText(step.description());
         }
         this.shortDescriptionTextView.setText(step.shortDescription());
+    }
+
+    @Override
+    public void onStart() {
+        super.onStart();
+        if (Build.VERSION.SDK_INT > Build.VERSION_CODES.M) {
+            initializeMediaPlayer();
+        }
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
         setUpMediaContent();
+        if (Build.VERSION.SDK_INT <= Build.VERSION_CODES.M || mediaPlayer == null) {
+            initializeMediaPlayer();
+        }
+    }
+
+    private void initializeMediaPlayer() {
+        if (shouldPrepareVideo()) {
+            mediaPlayer = ExoPlayerManager.getInstance().prepareExoPlayerForUri(
+                    step.id(),
+                    getContext(),
+                    Uri.parse(step.videoPath()),
+                    mediaPlayerView,
+                    currentWindow,
+                    playWhenReady,
+                    playbackPosition);
+        }
     }
 
     private void setUpMediaContent() {
-        if (!step.videoPath().isEmpty() && mediaPlayerView != null) {
-            ExoPlayerManager.getInstance()
-                    .prepareExoPlayerForUri(getContext(), Uri.parse(step.videoPath()), mediaPlayerView);
-            ExoPlayerManager.getInstance().goToForeground();
-            return;
-        }
-
-        if (!step.thumbnailPath().isEmpty()) {
+        if (shouldPrepareImage()) {
             setUpStepImageView();
             return;
         }
 
-        setUpEmptyImageView();
+        if (shouldPrepareEmptyView()) {
+            setUpEmptyImageView();
+        }
     }
 
     private void setUpStepImageView() {
@@ -135,22 +167,56 @@ public class StepDetailFragment extends Fragment {
         imageView.setBackgroundColor(placeholderBackgroundColor);
     }
 
+    private boolean shouldPrepareVideo() {
+        return !step.videoPath().isEmpty();
+    }
+
+    private boolean shouldPrepareImage() {
+        return !shouldPrepareVideo() && !step.thumbnailPath().isEmpty();
+    }
+
+    private boolean shouldPrepareEmptyView() {
+        return !shouldPrepareVideo() && !shouldPrepareImage();
+    }
+
     @Override
     public void onPause() {
         super.onPause();
-        ExoPlayerManager.getInstance().goToBackground();
+        if (Build.VERSION.SDK_INT <= Build.VERSION_CODES.M) {
+            releasePlayer();
+        }
+    }
+
+    @Override
+    public void onStop() {
+        super.onStop();
+        if (Build.VERSION.SDK_INT > Build.VERSION_CODES.M) {
+            releasePlayer();
+        }
+    }
+
+    private void releasePlayer() {
+        if (mediaPlayer != null) {
+            playbackPosition = mediaPlayer.getCurrentPosition();
+            currentWindow = mediaPlayer.getCurrentWindowIndex();
+            playWhenReady = mediaPlayer.getPlayWhenReady();
+            ExoPlayerManager.getInstance().releaseExoPlayer(step.id());
+            mediaPlayer = null;
+        }
     }
 
     @Override
     public void onDestroyView() {
         super.onDestroyView();
-        ExoPlayerManager.getInstance().releasePlayer();
         butterKnifeUnbinder.unbind();
     }
 
     @Override
     public void onSaveInstanceState(Bundle outState) {
         outState.putParcelable(LAST_KNOWN_STEP, step);
+        outState.putInt(LAST_KNOWN_EXOPLAYER_CURRENT_WINDOW, currentWindow);
+        outState.putBoolean(LAST_KNOWN_EXOPLAYER_PLAY_WHEN_READY, playWhenReady);
+        outState.putLong(LAST_KNOWN_EXOPLAYER_PLAYBACK_POSITION, playbackPosition);
         super.onSaveInstanceState(outState);
     }
 
