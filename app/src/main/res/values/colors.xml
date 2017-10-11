@@ -65,4 +65,8 @@
         <item>@color/green_900</item>
     </integer-array>
 
+    <!-- Steps List -->
+    <color name="steps_list_ordinary_item_background_color">@color/black_transparent</color>
+    <color name="steps_list_selected_item_background_color">@color/primary_light</color>
+
 </resources>

@@ -1,6 +1,5 @@
 package br.com.ecarrara.yabaking.steps.presentation.navigating;
 
-import android.graphics.BitmapFactory;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
@@ -12,26 +11,18 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import com.google.android.exoplayer2.DefaultLoadControl;
-import com.google.android.exoplayer2.ExoPlayerFactory;
-import com.google.android.exoplayer2.LoadControl;
 import com.google.android.exoplayer2.SimpleExoPlayer;
-import com.google.android.exoplayer2.extractor.DefaultExtractorsFactory;
-import com.google.android.exoplayer2.source.ExtractorMediaSource;
-import com.google.android.exoplayer2.source.MediaSource;
-import com.google.android.exoplayer2.trackselection.DefaultTrackSelector;
-import com.google.android.exoplayer2.trackselection.TrackSelector;
 import com.google.android.exoplayer2.ui.SimpleExoPlayerView;
-import com.google.android.exoplayer2.upstream.DefaultDataSourceFactory;
-import com.google.android.exoplayer2.util.Util;
 import com.squareup.picasso.Picasso;
 
 import br.com.ecarrara.yabaking.R;
+import br.com.ecarrara.yabaking.core.utils.ExoPlayerManager;
 import br.com.ecarrara.yabaking.steps.domain.entity.Step;
 import butterknife.BindView;
 import butterknife.ButterKnife;
+import butterknife.Unbinder;
 
-import static android.view.View.INVISIBLE;
+import static android.view.View.VISIBLE;
 
 public class StepDetailFragment extends Fragment {
 
@@ -39,6 +30,7 @@ public class StepDetailFragment extends Fragment {
 
     /**
      * Create a new Step Detail View for the informed step
+     *
      * @param step to be rendered by the view
      * @return the prepared view
      */
@@ -59,14 +51,22 @@ public class StepDetailFragment extends Fragment {
     @BindView(R.id.step_detail_short_description_text_view)
     TextView shortDescriptionTextView;
 
+    @Nullable
     @BindView(R.id.step_detail_description_text_view)
     TextView descriptionTextView;
 
+    private Unbinder butterKnifeUnbinder;
+
     private static final String LAST_KNOWN_STEP = "last_known_step";
+    private static final String LAST_KNOWN_EXOPLAYER_CURRENT_WINDOW = "last_known_exoplayer_current_window";
+    private static final String LAST_KNOWN_EXOPLAYER_PLAY_WHEN_READY = "last_known_exoplayer_play_when_ready";
+    private static final String LAST_KNOWN_EXOPLAYER_PLAYBACK_POSITION = "last_known_exoplayer_playback_position";
 
     private Step step;
     private SimpleExoPlayer mediaPlayer;
-
+    private int currentWindow = 0;
+    private boolean playWhenReady = false;
+    private long playbackPosition = 0L;
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
@@ -82,8 +82,11 @@ public class StepDetailFragment extends Fragment {
     }
 
     private void processSavedInstanceState(Bundle savedInstanceState) {
-        if(savedInstanceState != null && step == null) {
+        if (savedInstanceState != null) {
             step = savedInstanceState.getParcelable(LAST_KNOWN_STEP);
+            currentWindow = savedInstanceState.getInt(LAST_KNOWN_EXOPLAYER_CURRENT_WINDOW);
+            playWhenReady = savedInstanceState.getBoolean(LAST_KNOWN_EXOPLAYER_PLAY_WHEN_READY);
+            playbackPosition = savedInstanceState.getLong(LAST_KNOWN_EXOPLAYER_PLAYBACK_POSITION);
         }
     }
 
@@ -91,56 +94,61 @@ public class StepDetailFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View inflatedView = inflater.inflate(R.layout.step_details_fragment, container, false);
-        ButterKnife.bind(this, inflatedView);
+        butterKnifeUnbinder = ButterKnife.bind(this, inflatedView);
         initialize();
         return inflatedView;
     }
 
     private void initialize() {
+        if (!isOnLandscapeLayout()) {
+            this.descriptionTextView.setText(step.description());
+        }
         this.shortDescriptionTextView.setText(step.shortDescription());
-        this.descriptionTextView.setText(step.description());
+    }
 
+    @Override
+    public void onStart() {
+        super.onStart();
+        if (Build.VERSION.SDK_INT > Build.VERSION_CODES.M) {
+            initializeMediaPlayer();
+        }
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
         setUpMediaContent();
+        if (Build.VERSION.SDK_INT <= Build.VERSION_CODES.M || mediaPlayer == null) {
+            initializeMediaPlayer();
+        }
+    }
+
+    private void initializeMediaPlayer() {
+        if (shouldPrepareVideo()) {
+            mediaPlayer = ExoPlayerManager.getInstance().prepareExoPlayerForUri(
+                    step.id(),
+                    getContext(),
+                    Uri.parse(step.videoPath()),
+                    mediaPlayerView,
+                    currentWindow,
+                    playWhenReady,
+                    playbackPosition);
+        }
     }
 
     private void setUpMediaContent() {
-        if(!step.videoPath().isEmpty()) {
-            setUpMediaPlayer();
-            setUpMediaSource();
-            return;
-        }
-
-        if(!step.thumbnailPath().isEmpty()) {
+        if (shouldPrepareImage()) {
             setUpStepImageView();
             return;
         }
 
-        setUpEmptyImageView();
-    }
-
-    private void setUpMediaPlayer() {
-        mediaPlayerView.setDefaultArtwork(BitmapFactory.decodeResource(getResources(), R.color.accent));
-
-        TrackSelector trackSelector = new DefaultTrackSelector();
-        LoadControl loadControl = new DefaultLoadControl();
-        mediaPlayer = ExoPlayerFactory.newSimpleInstance(getContext(), trackSelector, loadControl);
-        mediaPlayerView.setPlayer(mediaPlayer);
-    }
-
-    private void setUpMediaSource() {
-        final String APPLICATION_BASE_USER_AGENT = "YaBaking";
-        final String userAgent = Util.getUserAgent(getContext(), APPLICATION_BASE_USER_AGENT);
-        MediaSource mediaSource = new ExtractorMediaSource(
-                Uri.parse(step.videoPath()),
-                new DefaultDataSourceFactory(getContext(), userAgent),
-                new DefaultExtractorsFactory(),
-                null, null);
-        mediaPlayer.prepare(mediaSource);
-        mediaPlayer.getPlayWhenReady();
+        if (shouldPrepareEmptyView()) {
+            setUpEmptyImageView();
+        }
     }
 
     private void setUpStepImageView() {
-        mediaPlayerView.setVisibility(INVISIBLE);
+        imageView.setVisibility(VISIBLE);
         Picasso.with(getContext())
                 .load(step.thumbnailPath())
                 .placeholder(R.color.primary)
@@ -149,9 +157,9 @@ public class StepDetailFragment extends Fragment {
     }
 
     private void setUpEmptyImageView() {
-        mediaPlayerView.setVisibility(INVISIBLE);
+        imageView.setVisibility(VISIBLE);
         int placeholderBackgroundColor;
-        if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
             placeholderBackgroundColor = getResources().getColor(R.color.primary, null);
         } else {
             placeholderBackgroundColor = getResources().getColor(R.color.primary);
@@ -159,24 +167,61 @@ public class StepDetailFragment extends Fragment {
         imageView.setBackgroundColor(placeholderBackgroundColor);
     }
 
+    private boolean shouldPrepareVideo() {
+        return !step.videoPath().isEmpty();
+    }
+
+    private boolean shouldPrepareImage() {
+        return !shouldPrepareVideo() && !step.thumbnailPath().isEmpty();
+    }
+
+    private boolean shouldPrepareEmptyView() {
+        return !shouldPrepareVideo() && !shouldPrepareImage();
+    }
+
     @Override
-    public void onDestroy() {
-        super.onDestroy();
-        releasePlayer();
+    public void onPause() {
+        super.onPause();
+        if (Build.VERSION.SDK_INT <= Build.VERSION_CODES.M) {
+            releasePlayer();
+        }
+    }
+
+    @Override
+    public void onStop() {
+        super.onStop();
+        if (Build.VERSION.SDK_INT > Build.VERSION_CODES.M) {
+            releasePlayer();
+        }
     }
 
     private void releasePlayer() {
-        if(mediaPlayer != null) {
-            mediaPlayer.stop();
-            mediaPlayer.release();
+        if (mediaPlayer != null) {
+            playbackPosition = mediaPlayer.getCurrentPosition();
+            currentWindow = mediaPlayer.getCurrentWindowIndex();
+            playWhenReady = mediaPlayer.getPlayWhenReady();
+            ExoPlayerManager.getInstance().releaseExoPlayer(step.id());
             mediaPlayer = null;
         }
     }
 
     @Override
+    public void onDestroyView() {
+        super.onDestroyView();
+        butterKnifeUnbinder.unbind();
+    }
+
+    @Override
     public void onSaveInstanceState(Bundle outState) {
         outState.putParcelable(LAST_KNOWN_STEP, step);
+        outState.putInt(LAST_KNOWN_EXOPLAYER_CURRENT_WINDOW, currentWindow);
+        outState.putBoolean(LAST_KNOWN_EXOPLAYER_PLAY_WHEN_READY, playWhenReady);
+        outState.putLong(LAST_KNOWN_EXOPLAYER_PLAYBACK_POSITION, playbackPosition);
         super.onSaveInstanceState(outState);
+    }
+
+    private boolean isOnLandscapeLayout() {
+        return (descriptionTextView == null);
     }
 
 }

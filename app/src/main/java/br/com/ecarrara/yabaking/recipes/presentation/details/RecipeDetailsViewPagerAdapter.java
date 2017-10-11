@@ -1,7 +1,6 @@
 package br.com.ecarrara.yabaking.recipes.presentation.details;
 
 import android.content.Context;
-import android.support.annotation.NonNull;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentStatePagerAdapter;
@@ -10,7 +9,6 @@ import br.com.ecarrara.yabaking.R;
 import br.com.ecarrara.yabaking.ingredients.presentation.listing.IngredientsListFragment;
 import br.com.ecarrara.yabaking.recipes.domain.entity.Recipe;
 import br.com.ecarrara.yabaking.steps.presentation.listing.StepsListFragment;
-import br.com.ecarrara.yabaking.steps.presentation.navigating.StepSelectedListener;
 
 class RecipeDetailsViewPagerAdapter extends FragmentStatePagerAdapter {
 
@@ -21,7 +19,6 @@ class RecipeDetailsViewPagerAdapter extends FragmentStatePagerAdapter {
 
     private Context context;
     private Recipe recipe;
-    private StepSelectedListener stepSelectedListener;
 
     public RecipeDetailsViewPagerAdapter(FragmentManager fragmentManager, Context context, Recipe recipe) {
         this(fragmentManager);
@@ -33,10 +30,6 @@ class RecipeDetailsViewPagerAdapter extends FragmentStatePagerAdapter {
         super(fragmentManager);
     }
 
-    public void setStepSelectedListener(@NonNull StepSelectedListener stepSelectedListener) {
-        this.stepSelectedListener = stepSelectedListener;
-    }
-
     @Override
     public Fragment getItem(int position) {
         switch (position) {
@@ -44,7 +37,6 @@ class RecipeDetailsViewPagerAdapter extends FragmentStatePagerAdapter {
                 return IngredientsListFragment.newInstance(recipe.ingredients());
             case PAGE_POSITION_STEPS:
                 StepsListFragment stepsListFragment = StepsListFragment.newInstance(recipe.steps());
-                stepsListFragment.setStepSelectedListener(stepSelectedListener);
                 return stepsListFragment;
             default:
                 throw new UnsupportedOperationException("Page position not supported: " + position);

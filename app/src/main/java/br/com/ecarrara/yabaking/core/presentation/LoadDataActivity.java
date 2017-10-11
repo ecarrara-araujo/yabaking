@@ -27,6 +27,7 @@ public abstract class LoadDataActivity<T> extends AppCompatActivity
         hideError();
         hideRetry();
         hideContent();
+        progressIndicator.setVisibility(VISIBLE);
     }
 
     @Override
