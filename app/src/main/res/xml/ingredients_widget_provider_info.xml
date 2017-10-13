@@ -5,7 +5,7 @@
     android:initialLayout="@layout/ingredients_widget_provider"
     android:minHeight="180dp"
     android:minWidth="250dp"
-    android:previewImage="@mipmap/ic_launcher_round"
+    android:previewImage="@mipmap/ic_launcher"
     android:resizeMode="horizontal|vertical"
     android:updatePeriodMillis="86400000"
     android:widgetCategory="home_screen" />
