@@ -1,6 +1,72 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <color name="colorPrimary">#3F51B5</color>
-    <color name="colorPrimaryDark">#303F9F</color>
-    <color name="colorAccent">#FF4081</color>
+
+    <color name="primary">@color/deep_orange_500</color>
+    <color name="primary_dark">@color/deep_orange_700</color>
+    <color name="primary_light">@color/deep_orange_100</color>
+    <color name="accent">@color/amber_500</color>
+    <color name="primary_text">@color/grey_900</color>
+    <color name="secondary_text">@color/grey_600</color>
+    <color name="icons">@color/white</color>
+    <color name="divider">@color/grey_400</color>
+
+    <!-- Blacks -->
+    <color name="black">#000000</color>
+    <color name="black_transparent">#00000000</color>
+    <color name="black_semi_transparent">#4d000000</color>
+
+    <!-- Whites -->
+    <color name="white">#FFFFFF</color>
+
+    <!-- Oranges -->
+    <color name="deep_orange_100">#FFCCBC</color>
+    <color name="deep_orange_500">#FF5722</color>
+    <color name="deep_orange_700">#E64A19</color>
+
+    <!-- Grays -->
+    <color name="grey_400">#BDBDBD</color>
+    <color name="grey_600">#757575</color>
+    <color name="grey_900">#212121</color>
+
+    <!-- Ambers -->
+    <color name="amber_500">#FFC107</color>
+
+    <!-- Reds -->
+    <color name="red_500">#F44336</color>
+    <color name="red_900">#B71C1C</color>
+
+    <!-- Pinks -->
+    <color name="pink_500">#E91E63</color>
+    <color name="pink_900">#880E4F</color>
+
+    <!-- Purples -->
+    <color name="purple_500">#9C27B0</color>
+    <color name="purple_900">#4A148C</color>
+
+    <!-- Blues -->
+    <color name="blue_500">#2196F3</color>
+    <color name="blue_900">#0D47A1</color>
+
+    <!-- Greens -->
+    <color name="green_500">#8BC34A</color>
+    <color name="green_900">#33691E</color>
+
+    <!-- Recipes List Colors Array -->
+    <integer-array name="recipes_list_colors">
+        <item>@color/red_500</item>
+        <item>@color/pink_500</item>
+        <item>@color/purple_500</item>
+        <item>@color/blue_500</item>
+        <item>@color/green_500</item>
+        <item>@color/red_900</item>
+        <item>@color/pink_900</item>
+        <item>@color/purple_900</item>
+        <item>@color/blue_900</item>
+        <item>@color/green_900</item>
+    </integer-array>
+
+    <!-- Steps List -->
+    <color name="steps_list_ordinary_item_background_color">@color/black_transparent</color>
+    <color name="steps_list_selected_item_background_color">@color/primary_light</color>
+
 </resources>

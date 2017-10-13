@@ -1,8 +1,24 @@
 apply plugin: 'com.android.application'
+apply plugin: 'me.tatarka.retrolambda'
+
+ext {
+    ANDROID_SUPPORT_LIBS_VERSION = '26.0.1'
+    ANDROID_TEST_SUPPORT_LIBS_VERSION = '1.0.0'
+    DAGGER_VERSION = '2.10'
+    BUTTERKNIFE_VERSION = '8.5.1'
+    AUTO_VALUES_VERSION = '1.2'
+    AUTO_VALUES_GSON_VERSION = '0.4.5'
+    EXOPLAYER_VERSION = 'r2.2.0'
+    RETROFIT_VERSION = '2.1.0'
+    OKHTTP_VERSION = '3.4.1'
+    DBFLOW_VERSION = '4.1.1'
+    ESPRESSO_VERSION = '3.0.0'
+}
 
 android {
+
     compileSdkVersion 26
-    buildToolsVersion "26.0.1"
+    buildToolsVersion ANDROID_SUPPORT_LIBS_VERSION
     defaultConfig {
         applicationId "br.com.ecarrara.yabaking"
         minSdkVersion 21
@@ -11,19 +27,110 @@ android {
         versionName "1.0"
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
     }
+
     buildTypes {
         release {
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
         }
     }
+
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_1_8
+        targetCompatibility JavaVersion.VERSION_1_8
+    }
+
 }
 
 dependencies {
+
     compile fileTree(dir: 'libs', include: ['*.jar'])
-    androidTestCompile('com.android.support.test.espresso:espresso-core:2.2.2', {
+
+    // Android Support Libraries
+    compile "com.android.support:appcompat-v7:$ANDROID_SUPPORT_LIBS_VERSION"
+    compile "com.android.support:recyclerview-v7:$ANDROID_SUPPORT_LIBS_VERSION"
+    compile "com.android.support:design:$ANDROID_SUPPORT_LIBS_VERSION"
+    compile "com.android.support:cardview-v7:${ANDROID_SUPPORT_LIBS_VERSION}"
+    compile "com.android.support:support-annotations:$ANDROID_SUPPORT_LIBS_VERSION"
+    compile 'com.android.support.constraint:constraint-layout:1.0.2'
+
+    // Image Handling
+    compile 'com.squareup.picasso:picasso:2.5.2'
+
+    // Logging
+    compile 'com.jakewharton.timber:timber:4.5.1'
+
+    // Networking Libs
+    compile 'com.google.code.gson:gson:2.8.0'
+    compile "com.squareup.retrofit2:retrofit:$RETROFIT_VERSION"
+    compile "com.squareup.retrofit2:converter-gson:$RETROFIT_VERSION"
+    compile "com.squareup.retrofit2:adapter-rxjava2:2.3.0"
+    compile "com.squareup.okhttp3:okhttp:$OKHTTP_VERSION"
+    compile "com.squareup.okhttp3:logging-interceptor:$OKHTTP_VERSION"
+
+    // Reactive Libs
+    compile 'io.reactivex.rxjava2:rxjava:2.1.3'
+    compile 'io.reactivex.rxjava2:rxandroid:2.0.1'
+
+    // Auto Values
+    compile "com.google.auto.value:auto-value:$AUTO_VALUES_VERSION"
+    annotationProcessor "com.google.auto.value:auto-value:$AUTO_VALUES_VERSION"
+    annotationProcessor "com.ryanharter.auto.value:auto-value-parcel:0.2.5"
+    annotationProcessor "com.ryanharter.auto.value:auto-value-gson:$AUTO_VALUES_GSON_VERSION"
+    provided "com.ryanharter.auto.value:auto-value-gson:$AUTO_VALUES_GSON_VERSION"
+
+    // Dependency Injection
+    compile "com.jakewharton:butterknife:$BUTTERKNIFE_VERSION"
+    annotationProcessor "com.jakewharton:butterknife-compiler:$BUTTERKNIFE_VERSION"
+
+    compile "com.google.dagger:dagger:$DAGGER_VERSION"
+    annotationProcessor "com.google.dagger:dagger-compiler:$DAGGER_VERSION"
+
+    // Media
+    compile "com.google.android.exoplayer:exoplayer:$EXOPLAYER_VERSION"
+
+    // Local Database
+    annotationProcessor "com.github.Raizlabs.DBFlow:dbflow-processor:${DBFLOW_VERSION}"
+    compile "com.github.Raizlabs.DBFlow:dbflow-core:${DBFLOW_VERSION}"
+    compile "com.github.Raizlabs.DBFlow:dbflow:${DBFLOW_VERSION}"
+    compile "com.github.Raizlabs.DBFlow:dbflow-rx2:${DBFLOW_VERSION}"
+
+    // Utils
+    compile 'com.annimon:stream:1.1.9'
+
+    // Unit Tests
+    testCompile 'junit:junit:4.12'
+    testCompile ("com.android.support.test:runner:${ANDROID_TEST_SUPPORT_LIBS_VERSION}", {
         exclude group: 'com.android.support', module: 'support-annotations'
     })
-    compile 'com.android.support:appcompat-v7:26.+'
-    testCompile 'junit:junit:4.12'
+    testCompile ("com.android.support.test:rules:${ANDROID_TEST_SUPPORT_LIBS_VERSION}", {
+        exclude group: 'com.android.support', module: 'support-annotations'
+    })
+
+    // Instrumentation Tests
+    androidTestCompile ("com.android.support.test:runner:${ANDROID_TEST_SUPPORT_LIBS_VERSION}", {
+        exclude group: 'com.android.support', module: 'support-annotations'
+    })
+    androidTestCompile ("com.android.support.test:rules:${ANDROID_TEST_SUPPORT_LIBS_VERSION}", {
+        exclude group: 'com.android.support', module: 'support-annotations'
+    })
+
+    androidTestCompile("com.android.support.test.espresso:espresso-core:$ESPRESSO_VERSION", {
+        exclude group: 'com.android.support', module: 'support-annotations'
+    })
+    androidTestCompile ("com.android.support.test.espresso:espresso-contrib:$ESPRESSO_VERSION", {
+        exclude group: 'com.android.support', module: 'appcompat'
+        exclude group: 'com.android.support', module: 'appcompat-v7'
+        exclude group: 'com.android.support', module: 'support-v4'
+        exclude group: 'com.android.support', module: 'support-annotations'
+        exclude group: 'com.android.support', module: 'design'
+        exclude module: 'recyclerview-v7'
+    })
+    androidTestCompile 'org.hamcrest:hamcrest-integration:1.3'
+    androidTestCompile ('com.squareup.rx.idler:rx2-idler:0.9.0', {
+        exclude group: 'com.android.support', module: 'support-annotations'
+        exclude group: 'io.reactivex.rxjava2', module: 'rxjava'
+        exclude group: 'org.reactivestreams', module: 'reactive-streams'
+    })
+
 }

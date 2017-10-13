@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <!-- Commons -->
+    <dimen name="list_item_single_line_height">48dp</dimen>
+    <dimen name="list_item_single_line_padding_start_end">16dp</dimen>
+    <dimen name="list_item_single_line_text_size">16sp</dimen>
+    <dimen name="list_single_line_padding_top_bottom">8dp</dimen>
+    <dimen name="app_bar_elevation">4dp</dimen>
+    <dimen name="card_resting_elevation">2dp</dimen>
+    <dimen name="widget_margin">8dp</dimen>
+    <dimen name="activity_default_margin">16dp</dimen>
+
+    <!-- Recipe Details -->
+    <dimen name="recipe_details_header_height">192dp</dimen>
+    <dimen name="recipe_deyails_app_bar_layout_elevation">0dp</dimen>
+
+    <!-- Recipes List -->
+    <dimen name="recipes_list_item_width_ratio">240dp</dimen>
+
+    <!-- Step Detail -->
+    <dimen name="step_detail_margin">8dp</dimen>
+    <dimen name="step_detail_margin_large">16dp</dimen>
+    <dimen name="step_detail_title_bottom_padding">16dp</dimen>
+
+    <!-- Player -->
+    <dimen name="player_padding">4dp</dimen>
+    <dimen name="player_seek_bar_height">32dp</dimen>
+
+    <!-- Ingredients Widget -->
+    <dimen name="ingredients_widget_background_corner_radius">4dp</dimen>
+    <dimen name="ingredients_widget_background_border_width">2dp</dimen>
+    <dimen name="ingredients_widget_ingredients_list_divider_height">1dp</dimen>
+
+</resources>

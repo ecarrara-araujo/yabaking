@@ -1,3 +1,35 @@
 <resources>
     <string name="app_name">YaBaking</string>
+
+    <!-- Load View -->
+    <string name="retry_button">Retry</string>
+
+    <!-- Recipe Details -->
+    <string name="recipe_details_image_description">This is an image for the recipe</string>
+    <string name="recipe_details_ingredient">Ingredients</string>
+    <string name="recipe_details_steps">Steps</string>
+
+    <!-- Ingredients -->
+    <string name="ingredient_description">%1$s %2$s of %3$s</string>
+
+    <!-- Measures -->
+    <string name="measure_cup">cup(s)</string>
+    <string name="measure_table_spoon">tablespoon(s)</string>
+    <string name="measure_tea_spoon">teaspoon(s)</string>
+    <string name="measure_kilogram">kilogram(s)</string>
+    <string name="measure_gram">gram(s)</string>
+    <string name="measure_oz">oz</string>
+    <string name="measure_unit">unit(s)</string>
+
+    <!-- Steps Details and Navigation -->
+    <string name="step_details_next_step">Next Step</string>
+    <string name="step_details_previous_step">Previous Step</string>
+    <string name="step_details_recipe_steps">Recipe Steps</string>
+    <string name="step_detail_image_with_step_execution_description">Image with step execution</string>
+
+    <!-- Ingredients Widget -->
+    <string name="ingredients_widget_select_a_recipe">Select a recipe</string>
+    <string name="ingredients_widget_ingredients_label">Ingredients</string>
+    <string name="ingredients_widget_empty_message">No recipe configured. Touch to select!</string>
+
 </resources>
