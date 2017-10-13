@@ -21,8 +21,8 @@ If you just want to give it a try download the test apk [here](https://drive.goo
   <img src="screenshots/yabaking_02.png" align="center" width=200>
   <img src="screenshots/yabaking_03.png" align="center" width=200>
   <img src="screenshots/yabaking_04.png" align="center" width=200>
-  <img src="screenshots/yabaking_05.png" align="center" width=200>
-  <img src="screenshots/yabaking_06.png" align="center" width=400>
+  <img src="screenshots/yabaking_06.png" align="center" width=200>
+  <img src="screenshots/yabaking_05.png" align="center" width=400>
   <img src="screenshots/yabaking_07.png" align="center" width=400>
 </p>
 
