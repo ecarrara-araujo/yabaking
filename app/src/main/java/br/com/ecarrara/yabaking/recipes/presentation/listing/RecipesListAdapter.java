@@ -12,9 +12,9 @@ import android.widget.TextView;
 import com.squareup.picasso.Picasso;
 
 import java.util.List;
-import java.util.Random;
 
 import br.com.ecarrara.yabaking.R;
+import br.com.ecarrara.yabaking.core.presentation.ColorCalculator;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 
@@ -22,12 +22,12 @@ public class RecipesListAdapter extends RecyclerView.Adapter<RecipesListAdapter.
 
     private Context context;
     private List<RecipeListItemViewModel> recipeListItemViewModels;
-    private int[] possibleBackgroundColors;
     private RecipeSelectedListener recipeSelectedListener;
+    private ColorCalculator colorCalculator;
 
     public RecipesListAdapter(@NonNull Context context, @NonNull RecipeSelectedListener recipeSelectedListener) {
         this.context = context;
-        this.possibleBackgroundColors = context.getResources().getIntArray(R.array.recipes_list_colors);
+        this.colorCalculator = new ColorCalculator(context.getResources().getIntArray(R.array.recipes_list_colors));
         this.recipeSelectedListener = recipeSelectedListener;
     }
 
@@ -48,15 +48,15 @@ public class RecipesListAdapter extends RecyclerView.Adapter<RecipesListAdapter.
             Picasso.with(context)
                     .load(recipeListItemViewModel.imageUrl())
                     .fit()
-                    .placeholder(getBackgroundColorForItem())
+                    .placeholder(getBackgroundColorForItem(position))
                     .into(holder.recipeImageView);
         } else {
-            holder.recipeImageView.setBackgroundColor(getBackgroundColorForItem());
+            holder.recipeImageView.setBackgroundColor(getBackgroundColorForItem(position));
         }
     }
 
-    private int getBackgroundColorForItem() {
-        return possibleBackgroundColors[new Random().nextInt(possibleBackgroundColors.length)];
+    private int getBackgroundColorForItem(int itemPosition) {
+        return colorCalculator.getColorIdForIndex(itemPosition);
     }
 
     @Override
