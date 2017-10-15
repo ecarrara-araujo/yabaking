@@ -28,8 +28,10 @@ public class StepsListFragment extends LoadDataFragment<List<String>> {
 
     public static final boolean NO_HIGHLIGHT = false;
     public static final boolean HIGHLIGHT = true;
+    public static final int NO_ITEM_SELECTED = -1;
 
     private static final String ARGUMENT_STEPS_LIST = "steps_list";
+    private static final String ARGUMENT_INITIAL_SELECTED_ITEM_POSITION = "initial_selected_item_position";
 
     /**
      * Create a new Steps List View for the informed steps
@@ -37,12 +39,13 @@ public class StepsListFragment extends LoadDataFragment<List<String>> {
      * @param steps to be rendered by the view
      * @return the prepared Ingredients List
      */
-    public static StepsListFragment newInstance(List<Step> steps) {
+    public static StepsListFragment newInstance(List<Step> steps, int initialSelectedPosition) {
         ArrayList<Step> stepsToBeBundled = new ArrayList<>(steps.size());
         stepsToBeBundled.addAll(steps);
         StepsListFragment stepsListFragment = new StepsListFragment();
         Bundle args = new Bundle();
         args.putParcelableArrayList(ARGUMENT_STEPS_LIST, stepsToBeBundled);
+        args.putInt(ARGUMENT_INITIAL_SELECTED_ITEM_POSITION, initialSelectedPosition);
         stepsListFragment.setArguments(args);
         return stepsListFragment;
     }
@@ -60,7 +63,6 @@ public class StepsListFragment extends LoadDataFragment<List<String>> {
     private static final String LAST_KNOWN_HIGHLIGHT_SELECTED_KEY = "last_known_highlight_selected";
 
     private static final int DEFAULT_STEPS_LIST_INITIAL_POSITION = 0;
-    private static final int NO_ITEM_SELECTED = -1;
 
     private int lastKnownStepsListPosition = DEFAULT_STEPS_LIST_INITIAL_POSITION;
     private StepsListAdapter stepsListAdapter;
@@ -86,7 +88,8 @@ public class StepsListFragment extends LoadDataFragment<List<String>> {
 
     private void processArguments(Bundle arguments) {
         if (arguments != null) {
-            steps = getArguments().getParcelableArrayList(ARGUMENT_STEPS_LIST);
+            steps = arguments.getParcelableArrayList(ARGUMENT_STEPS_LIST);
+            selectedItemPosition = arguments.getInt(ARGUMENT_INITIAL_SELECTED_ITEM_POSITION);
         }
     }
 
@@ -118,7 +121,7 @@ public class StepsListFragment extends LoadDataFragment<List<String>> {
     private void setupRecyclerView() {
         LinearLayoutManager layoutManager = new LinearLayoutManager(getContext(),
                 LinearLayoutManager.VERTICAL, false);
-        stepsListAdapter = new StepsListAdapter(getContext());
+        stepsListAdapter = new StepsListAdapter(getContext(), selectedItemPosition);
         stepsListAdapter.setHighlightSelected(highlightSelected);
         stepsListView.setAdapter(stepsListAdapter);
         stepsListView.setLayoutManager(layoutManager);

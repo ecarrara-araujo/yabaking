@@ -37,6 +37,11 @@ public class StepsListAdapter extends RecyclerView.Adapter<StepsListAdapter.View
     private int selectedItemBackgroundColor;
     private int ordinaryItemBackgroundColor;
 
+    public StepsListAdapter(@NonNull Context context, int initialSelectedPosition) {
+        this(context);
+        this.selectedItemPosition = initialSelectedPosition;
+    }
+
     public StepsListAdapter(@NonNull Context context) {
         Injector.applicationComponent().inject(this);
         this.context = context;
