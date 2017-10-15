@@ -110,16 +110,17 @@ public class StepsNavigationActivity extends AppCompatActivity {
 
     private void setUpViewForMultipane(@Nullable Bundle savedInstanceState) {
         if (isMultipaneLayout()) {
-            if (savedInstanceState == null) {
-                stepsListFragment = StepsListFragment.newInstance(steps);
-                stepsListFragment.setHighlightSelected(true);
-                stepsListFragment.setSelectedItemPosition(currentStepListPosition);
-                getSupportFragmentManager().beginTransaction()
-                        .add(R.id.step_details_step_list_container, stepsListFragment)
-                        .commit();
-            } else {
+            if (savedInstanceState != null) {
                 stepsListFragment = (StepsListFragment) getSupportFragmentManager()
                         .getFragment(savedInstanceState, STEPS_LIST_FRAGMENT_INSTANCE_KEY);
+            }
+
+            if (stepsListFragment == null) {
+                stepsListFragment = StepsListFragment.newInstance(steps, currentStepListPosition);
+                stepsListFragment.setHighlightSelected(true);
+                getSupportFragmentManager().beginTransaction()
+                        .replace(R.id.step_details_step_list_container, stepsListFragment)
+                        .commit();
             }
         }
     }
@@ -184,7 +185,7 @@ public class StepsNavigationActivity extends AppCompatActivity {
         outState.putParcelableArrayList(LAST_KNOWN_STEPS, stepsToBeBundled);
         outState.putInt(LAST_KNOWN_CURRENT_STEP_LIST_POSITION, stepDetailViewPager.getCurrentItem());
 
-        if (isMultipaneLayout()) {
+        if (isMultipaneLayout() && stepsListFragment != null) {
             getSupportFragmentManager().putFragment(outState, STEPS_LIST_FRAGMENT_INSTANCE_KEY, stepsListFragment);
         }
 
@@ -247,7 +248,7 @@ public class StepsNavigationActivity extends AppCompatActivity {
     }
 
     private boolean isMultipaneLayout() {
-        return stepsListContainer != null;
+        return getResources().getBoolean(R.bool.multiPaneMode);
     }
 
 }

@@ -182,16 +182,24 @@ public class StepDetailFragment extends Fragment {
     @Override
     public void onPause() {
         super.onPause();
+        /*
+          according to google exoplayer codelab we should try to release on onPause or on Stop
+          depending on the Android version (https://codelabs.developers.google.com/codelabs/exoplayer-intro/)
+         */
         if (Build.VERSION.SDK_INT <= Build.VERSION_CODES.M) {
-            ExoPlayerManager.getInstance().stopPlayerFor(step.id());
+            releasePlayer();
         }
     }
 
     @Override
     public void onStop() {
         super.onStop();
+        /*
+          according to google exoplayer codelab we should try to release on onPause or on Stop
+          depending on the Android version (https://codelabs.developers.google.com/codelabs/exoplayer-intro/)
+         */
         if (Build.VERSION.SDK_INT > Build.VERSION_CODES.M) {
-            ExoPlayerManager.getInstance().stopPlayerFor(step.id());
+            releasePlayer();
         }
     }
 
@@ -199,11 +207,13 @@ public class StepDetailFragment extends Fragment {
     public void onDestroyView() {
         super.onDestroyView();
         butterKnifeUnbinder.unbind();
-        releasePlayer();
     }
 
     private void releasePlayer() {
         if (mediaPlayer != null) {
+            playbackPosition = mediaPlayer.getCurrentPosition();
+            currentWindow = mediaPlayer.getCurrentWindowIndex();
+            playWhenReady = mediaPlayer.getPlayWhenReady();
             ExoPlayerManager.getInstance().releaseExoPlayer(step.id());
             mediaPlayer = null;
         }
@@ -212,14 +222,9 @@ public class StepDetailFragment extends Fragment {
     @Override
     public void onSaveInstanceState(Bundle outState) {
         outState.putParcelable(LAST_KNOWN_STEP, step);
-        if (mediaPlayer != null) {
-            playbackPosition = mediaPlayer.getCurrentPosition();
-            currentWindow = mediaPlayer.getCurrentWindowIndex();
-            playWhenReady = mediaPlayer.getPlayWhenReady();
-            outState.putInt(LAST_KNOWN_EXOPLAYER_CURRENT_WINDOW, currentWindow);
-            outState.putBoolean(LAST_KNOWN_EXOPLAYER_PLAY_WHEN_READY, playWhenReady);
-            outState.putLong(LAST_KNOWN_EXOPLAYER_PLAYBACK_POSITION, playbackPosition);
-        }
+        outState.putInt(LAST_KNOWN_EXOPLAYER_CURRENT_WINDOW, currentWindow);
+        outState.putBoolean(LAST_KNOWN_EXOPLAYER_PLAY_WHEN_READY, playWhenReady);
+        outState.putLong(LAST_KNOWN_EXOPLAYER_PLAYBACK_POSITION, playbackPosition);
         super.onSaveInstanceState(outState);
     }
 

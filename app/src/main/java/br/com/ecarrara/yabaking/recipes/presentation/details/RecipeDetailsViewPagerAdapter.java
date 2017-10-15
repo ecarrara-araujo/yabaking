@@ -10,6 +10,8 @@ import br.com.ecarrara.yabaking.ingredients.presentation.listing.IngredientsList
 import br.com.ecarrara.yabaking.recipes.domain.entity.Recipe;
 import br.com.ecarrara.yabaking.steps.presentation.listing.StepsListFragment;
 
+import static br.com.ecarrara.yabaking.steps.presentation.listing.StepsListFragment.NO_ITEM_SELECTED;
+
 class RecipeDetailsViewPagerAdapter extends FragmentStatePagerAdapter {
 
     static final int PAGE_POSITION_INGREDIENTS = 0;
@@ -36,7 +38,7 @@ class RecipeDetailsViewPagerAdapter extends FragmentStatePagerAdapter {
             case PAGE_POSITION_INGREDIENTS:
                 return IngredientsListFragment.newInstance(recipe.ingredients());
             case PAGE_POSITION_STEPS:
-                StepsListFragment stepsListFragment = StepsListFragment.newInstance(recipe.steps());
+                StepsListFragment stepsListFragment = StepsListFragment.newInstance(recipe.steps(), NO_ITEM_SELECTED);
                 return stepsListFragment;
             default:
                 throw new UnsupportedOperationException("Page position not supported: " + position);
