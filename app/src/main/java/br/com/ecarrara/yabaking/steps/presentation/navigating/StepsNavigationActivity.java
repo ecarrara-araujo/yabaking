@@ -110,16 +110,16 @@ public class StepsNavigationActivity extends AppCompatActivity {
 
     private void setUpViewForMultipane(@Nullable Bundle savedInstanceState) {
         if (isMultipaneLayout()) {
-            if (savedInstanceState == null) {
+            stepsListFragment = (StepsListFragment) getSupportFragmentManager()
+                    .getFragment(savedInstanceState, STEPS_LIST_FRAGMENT_INSTANCE_KEY);
+
+            if (stepsListFragment == null) {
                 stepsListFragment = StepsListFragment.newInstance(steps);
                 stepsListFragment.setHighlightSelected(true);
                 stepsListFragment.setSelectedItemPosition(currentStepListPosition);
                 getSupportFragmentManager().beginTransaction()
                         .add(R.id.step_details_step_list_container, stepsListFragment)
                         .commit();
-            } else {
-                stepsListFragment = (StepsListFragment) getSupportFragmentManager()
-                        .getFragment(savedInstanceState, STEPS_LIST_FRAGMENT_INSTANCE_KEY);
             }
         }
     }
