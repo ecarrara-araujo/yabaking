@@ -210,17 +210,24 @@ public class StepDetailFragment extends Fragment {
     }
 
     private void releasePlayer() {
+        updateCurrentLocalPlayerStatus();
         if (mediaPlayer != null) {
-            playbackPosition = mediaPlayer.getCurrentPosition();
-            currentWindow = mediaPlayer.getCurrentWindowIndex();
-            playWhenReady = mediaPlayer.getPlayWhenReady();
             ExoPlayerManager.getInstance().releaseExoPlayer(step.id());
             mediaPlayer = null;
         }
     }
 
+    private void updateCurrentLocalPlayerStatus() {
+        if (mediaPlayer != null) {
+            playbackPosition = mediaPlayer.getCurrentPosition();
+            currentWindow = mediaPlayer.getCurrentWindowIndex();
+            playWhenReady = mediaPlayer.getPlayWhenReady();
+        }
+    }
+
     @Override
     public void onSaveInstanceState(Bundle outState) {
+        updateCurrentLocalPlayerStatus();
         outState.putParcelable(LAST_KNOWN_STEP, step);
         outState.putInt(LAST_KNOWN_EXOPLAYER_CURRENT_WINDOW, currentWindow);
         outState.putBoolean(LAST_KNOWN_EXOPLAYER_PLAY_WHEN_READY, playWhenReady);
